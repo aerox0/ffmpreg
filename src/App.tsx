@@ -59,8 +59,13 @@ function App() {
               onSettingsChange={(settings) => updateItemSettings(activeItem.id, settings)}
             />
           ) : (
-            <div className="detail-empty">
-              Select a file from the queue to configure conversion settings
+            <div className="detail-placeholder">
+              <svg className="detail-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+              <p>Select a file from the <strong>queue</strong> to configure conversion settings</p>
             </div>
           )}
         </div>

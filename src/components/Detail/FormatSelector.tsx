@@ -37,7 +37,7 @@ export function FormatSelector({ inputType, currentFormat, onChange }: FormatSel
             className={`format-pill ${fmt === currentFormat ? 'active' : ''}`}
             onClick={() => onChange(fmt)}
           >
-            {FORMAT_LABELS[fmt] ?? fmt.toUpperCase()}
+            <span>{FORMAT_LABELS[fmt] ?? fmt.toUpperCase()}</span>
           </button>
         ))}
       </div>

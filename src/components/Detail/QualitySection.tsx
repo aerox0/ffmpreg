@@ -75,7 +75,7 @@ export function QualitySection({
               className={`preset-btn ${p.name === currentPreset ? 'active' : ''}`}
               onClick={() => handlePresetChange(p.name)}
             >
-              {p.label}
+              <span>{p.label}</span>
             </button>
           ))}
         </div>
@@ -96,7 +96,7 @@ export function QualitySection({
             className={`preset-btn ${p.name === currentPreset ? 'active' : ''}`}
             onClick={() => handlePresetChange(p.name)}
           >
-            {p.label}
+            <span>{p.label}</span>
           </button>
         ))}
       </div>
