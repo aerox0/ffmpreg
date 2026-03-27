@@ -37,7 +37,7 @@ Renderer updates progress bar → On completion, shows output file + size compar
 
 ## UI Design
 
-**Aesthetic:** Dark, film-editing inspired. Deep charcoal backgrounds with warm amber accent (`#e8a23a`). Typography uses Instrument Serif for branding/filenames, DM Sans for UI, JetBrains Mono for technical details.
+**Aesthetic:** Dark, film-editing inspired. Deep charcoal backgrounds with warm amber accent (`#e8a23a`).
 
 **Layout:** Single-window, two-panel:
 

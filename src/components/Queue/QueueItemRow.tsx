@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import type { QueueItem as QueueItemType } from '../../types/index';
+import { formatBytes, formatSizeComparison } from '../../lib/format';
 
 interface QueueItemProps {
   item: QueueItemType;
@@ -9,24 +10,6 @@ interface QueueItemProps {
   onRemove: (id: string) => void;
   onCancel: (id: string) => void;
   onRetry: (id: string) => void;
-}
-
-function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes < 0) return '0 B';
-  if (bytes === 0) return '0 B';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const k = 1024;
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), units.length - 1);
-  const value = bytes / Math.pow(k, i);
-  return `${value.toFixed(1)} ${units[i]}`;
-}
-
-function formatSizeComparison(outputSize: number, sourceSize: number): string {
-  if (sourceSize === 0) return '';
-  const pct = Math.round(((1 - outputSize / sourceSize) * 100));
-  if (pct > 0) return `${pct}% smaller`;
-  if (pct < 0) return `${Math.abs(pct)}% larger`;
-  return 'same size';
 }
 
 function getFileExtension(path: string): string {

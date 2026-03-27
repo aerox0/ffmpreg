@@ -7,6 +7,9 @@ export function estimateOutputSize(
   trim: TrimRange | null,
 ): number {
   const ratio = getCompressionRatio(preset);
+  if (source.duration <= 0) {
+    return Math.round(source.fileSize * ratio);
+  }
   const trimDuration = trim ? trim.end - trim.start : source.duration;
   const durationFactor = trimDuration / source.duration;
   return Math.round(source.fileSize * ratio * durationFactor);

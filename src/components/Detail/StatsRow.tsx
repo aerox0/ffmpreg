@@ -1,18 +1,9 @@
 import type { QueueItem } from '../../types/index';
 import { estimateOutputSize, shouldWarnSize } from '../../lib/estimate';
+import { formatBytes } from '../../lib/format';
 
 interface StatsRowProps {
   item: QueueItem;
-}
-
-function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes < 0) return '0 B';
-  if (bytes === 0) return '0 B';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const k = 1024;
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), units.length - 1);
-  const value = bytes / Math.pow(k, i);
-  return `${value.toFixed(1)} ${units[i]}`;
 }
 
 export function StatsRow({ item }: StatsRowProps) {

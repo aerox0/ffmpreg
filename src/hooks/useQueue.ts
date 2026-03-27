@@ -15,6 +15,7 @@ export interface UseQueueReturn {
   cancelAll: () => Promise<void>;
   retryItem: (id: string) => Promise<void>;
   clearDone: () => Promise<void>;
+  updateItemSettings: (id: string, settings: Partial<QueueItem['settings']>) => Promise<void>;
   bulkApplySettings: (format: string, quality: QualitySettings) => Promise<void>;
 }
 
@@ -177,6 +178,18 @@ export function useQueue(): UseQueueReturn {
     setItems(prev => prev.filter(item => item.status !== 'done'));
   }, [api]);
 
+  const updateItemSettings = useCallback(async (id: string, settings: Partial<QueueItem['settings']>) => {
+    if (!api) return;
+    await api.updateItemSettings(id, settings);
+    setItems(prev => prev.map(item => {
+      if (item.id !== id) return item;
+      return {
+        ...item,
+        settings: { ...item.settings, ...settings },
+      };
+    }));
+  }, [api]);
+
   const bulkApplySettings = useCallback(async (format: string, quality: QualitySettings) => {
     if (!api) return;
     const currentSelected = selectedIdsRef.current;
@@ -214,6 +227,7 @@ export function useQueue(): UseQueueReturn {
     cancelAll,
     retryItem,
     clearDone,
+    updateItemSettings,
     bulkApplySettings,
   };
 }

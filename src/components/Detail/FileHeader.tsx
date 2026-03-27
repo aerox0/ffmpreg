@@ -1,24 +1,8 @@
 import type { SourceMeta } from '../../types/index';
+import { formatBytes, formatDuration } from '../../lib/format';
 
 interface FileHeaderProps {
   source: SourceMeta;
-}
-
-function formatDuration(seconds: number): string {
-  if (!Number.isFinite(seconds) || seconds <= 0) return '--:--';
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
-
-function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes < 0) return '0 B';
-  if (bytes === 0) return '0 B';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const k = 1024;
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), units.length - 1);
-  const value = bytes / Math.pow(k, i);
-  return `${value.toFixed(1)} ${units[i]}`;
 }
 
 export function FileHeader({ source }: FileHeaderProps) {

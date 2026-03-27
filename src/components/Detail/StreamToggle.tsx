@@ -38,12 +38,6 @@ export function StreamToggle({ item, onSettingsChange }: StreamToggleProps) {
   const { source, settings } = item;
   const streams = source.streams;
 
-  // Only show toggle when source has multiple streams
-  const hasMultipleStreams = streams.length > 1;
-  if (!hasMultipleStreams) return null;
-
-  const mode = settings.mode;
-
   const handleModeChange = useCallback((newMode: 'convert' | 'extract') => {
     if (newMode === 'convert') {
       onSettingsChange({ mode: 'convert', extractStreamIndex: null });
@@ -82,6 +76,11 @@ export function StreamToggle({ item, onSettingsChange }: StreamToggleProps) {
       format: targetFormat,
     });
   }, [onSettingsChange]);
+
+  // Only show toggle when source has multiple streams
+  if (streams.length <= 1) return null;
+
+  const mode = settings.mode;
 
   return (
     <div className="stream-toggle">
