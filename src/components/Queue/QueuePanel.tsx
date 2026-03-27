@@ -12,6 +12,7 @@ interface QueuePanelProps {
   onClearDone: () => void;
   onStartQueue: () => void;
   onCancelItem: (id: string) => void;
+  onCancelAll: () => void;
   onRetryItem: (id: string) => void;
   onSelectItem: (id: string, multi: boolean) => void;
   onRangeSelect: (id: string) => void;
@@ -27,6 +28,7 @@ export function QueuePanel({
   onClearDone,
   onStartQueue,
   onCancelItem,
+  onCancelAll,
   onRetryItem,
   onSelectItem,
   onRangeSelect,
@@ -110,6 +112,13 @@ export function QueuePanel({
           disabled={!hasDone}
         >
           Clear Done
+        </button>
+        <button
+          className="btn-secondary"
+          onClick={onCancelAll}
+          disabled={!hasConverting}
+        >
+          Cancel All
         </button>
       </div>
     </div>

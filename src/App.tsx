@@ -18,6 +18,7 @@ function App() {
     clearDone,
     startQueue,
     cancelItem,
+    cancelAll,
     retryItem,
     selectItem,
     rangeSelect,
@@ -45,6 +46,7 @@ function App() {
           onClearDone={clearDone}
           onStartQueue={startQueue}
           onCancelItem={cancelItem}
+          onCancelAll={cancelAll}
           onRetryItem={retryItem}
           onSelectItem={selectItem}
           onRangeSelect={rangeSelect}
