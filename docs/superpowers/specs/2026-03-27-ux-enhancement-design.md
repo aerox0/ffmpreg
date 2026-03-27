@@ -47,10 +47,11 @@ ffmpreg is a desktop FFmpeg frontend with waveform trimming. The UI was recently
 - Max 3 visible; additional toasts are held in renderer state and shown as others dismiss (FIFO queue in memory, not dropped).
 
 ### Data Flow
-- Main process detects conversion complete via IPC `onStatusChange`.
-- `onStatusChange` emits a `toast` event to renderer via a new IPC channel `show-toast`.
-- Renderer maintains a `toasts` state array, managed by `useToast` hook.
+- Main process detects conversion complete via IPC `onStatusChange` (already fires on done/failed).
+- Renderer `useEffect` listens to `onStatusChange`; when `status === 'done' || status === 'failed'`, calls `addToast()` from `useToast` hook.
+- No new IPC channel needed — reuse existing `encode:status` event.
 - Toast auto-dismiss uses `setTimeout` cleared on unmount or manual dismiss.
+- "Open" action: renderer calls IPC `shell:open-folder` with the output directory path (via new IPC handler).
 
 ### States
 - `entering` — slide-in animation
@@ -84,7 +85,7 @@ ffmpreg is a desktop FFmpeg frontend with waveform trimming. The UI was recently
 | `Delete` / `Backspace` | Remove selected items |
 | `Enter` | Start queue |
 | `Escape` | Deselect all |
-| `Space` | Toggle pause on active conversion (requires IPC `pause-item`/`resume-item` channels — add if not yet implemented) |
+| `Space` | Toggle pause on active conversion (IPC stubs `pause-item`/`resume-item` added now; worker support is future work) |
 | `↑` / `↓` | Navigate queue (move activeItem) |
 | `Ctrl+A` / `Cmd+A` | Select all items |
 
@@ -93,7 +94,7 @@ ffmpreg is a desktop FFmpeg frontend with waveform trimming. The UI was recently
 - `useCallback` for each handler to avoid re-registration.
 - Prevent default on `Space` to avoid page scroll.
 - `e.key` normalized for cross-platform (check `e.metaKey` for Cmd on Mac).
-- `pause-item` and `resume-item` IPC channels must be added to `src/ipc/channels.ts` if not already present in the Electron main process.
+- `pause-item` and `resume-item` IPC channels added as stubs (main process handlers registered; worker pause/resume is future work). `shell:open-folder` IPC handler added to `electron/main.ts` for toast "Open" action.
 
 ---
 
@@ -106,7 +107,8 @@ ffmpreg is a desktop FFmpeg frontend with waveform trimming. The UI was recently
 | `src/components/Detail/StatsRow.tsx` | Add proportional bar visualization |
 | `src/components/Queue/ToastContainer.tsx` | New — toast stack management |
 | `src/hooks/useToast.ts` | New — toast state management |
-| `src/ipc/channels.ts` | Add `show-toast`, `pause-item`, `resume-item` channels |
+| `src/ipc/channels.ts` | Add `pause-item`, `resume-item` channels (stubs); add `shell:open-folder` channel |
+| `electron/main.ts` | Add `shell:open-folder` IPC handler; add `pause-item`/`resume-item` stubs |
 | `src/index.css` | Add toast animations, progress bar styles |
 | `src/App.css` | Add header progress styles, toast styles |
 
