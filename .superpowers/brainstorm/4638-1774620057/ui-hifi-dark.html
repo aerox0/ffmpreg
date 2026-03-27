@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ffmpreg — mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #0e0e10;
+    --bg: #16161a;
+    --bg-raised: #1e1e24;
+    --bg-hover: #26262e;
+    --border: #2a2a34;
+    --border-subtle: #222230;
+    --text: #e8e6e3;
+    --text-secondary: #8b8a8d;
+    --text-muted: #5c5b5f;
+    --accent: #e8a23a;
+    --accent-dim: rgba(232, 162, 58, 0.12);
+    --accent-glow: rgba(232, 162, 58, 0.25);
+    --green: #5bd47a;
+    --green-dim: rgba(91, 212, 122, 0.12);
+    --red: #e85d5d;
+    --blue: #5b9be8;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === TITLE BAR === */
+  .titlebar {
+    height: 40px;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    -webkit-app-region: drag;
+  }
+  .traffic-lights {
+    display: flex; gap: 7px;
+  }
+  .traffic-lights span {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .traffic-lights .red { background: #ff5f57; }
+  .traffic-lights .yellow { background: #febc2e; }
+  .traffic-lights .green { background: #28c840; }
+  .titlebar-text {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  /* === TOOLBAR === */
+  .toolbar {
+    height: 52px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .app-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    font-style: italic;
+  }
+  .toolbar-sep {
+    width: 1px; height: 24px; background: var(--border);
+  }
+  .toolbar-actions {
+    display: flex; gap: 8px; margin-left: auto;
+  }
+  .btn {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--bg-hover); color: var(--text); }
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0e10;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: #f0b04e; }
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* === MAIN LAYOUT === */
+  .main {
+    display: flex;
+    height: calc(100vh - 92px);
+  }
+
+  /* === QUEUE PANEL === */
+  .queue-panel {
+    width: 420px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+  }
+  .queue-header {
+    padding: 16px 20px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .queue-header h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .queue-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg-raised);
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    margin: 0 16px 12px;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s;
+    background: var(--bg-raised);
+  }
+  .drop-zone:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .drop-zone-icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+    opacity: 0.4;
+  }
+  .drop-zone-text {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .drop-zone-text strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Queue items */
+  .queue-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 12px;
+  }
+  .queue-item {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .queue-item:hover { background: var(--bg-hover); }
+  .queue-item.active {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    padding: 11px;
+  }
+  .queue-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+  .queue-item-name {
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+  }
+  .queue-item-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+  .badge-converting { background: var(--accent-dim); color: var(--accent); }
+  .badge-queued { background: var(--bg-deep); color: var(--text-muted); }
+  .badge-done { background: var(--green-dim); color: var(--green); }
+  .queue-item-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 8px;
+  }
+  .queue-item-meta span::after {
+    content: '→';
+    margin-left: 4px;
+    color: var(--accent);
+    font-size: 9px;
+  }
+  .queue-item-meta span:last-child::after { display: none; }
+  .progress-bar {
+    height: 3px;
+    background: var(--border-subtle);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), #f0c76e);
+    transition: width 0.3s;
+  }
+  .progress-fill.done {
+    background: var(--green);
+  }
+
+  /* Queue footer */
+  .queue-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+  }
+  .queue-footer .btn { flex: 1; text-align: center; font-size: 12px; }
+
+  /* === DETAIL PANEL === */
+  .detail-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-deep);
+    overflow-y: auto;
+  }
+  .detail-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* File header */
+  .detail-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-filename {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .detail-meta {
+    display: flex;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .detail-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .detail-meta .dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--text-muted);
+    opacity: 0.4;
+  }
+
+  /* Sections */
+  .detail-section {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-section:last-child { border-bottom: none; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  /* Format pills */
+  .format-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .format-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .format-pill:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+  .format-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0e0e10;
+    font-weight: 600;
+  }
+  .format-pill .pill-ext {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+  }
+
+  /* Quality presets */
+  .quality-presets {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .quality-preset {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quality-preset:hover {
+    border-color: var(--text-muted);
+  }
+  .quality-preset.active {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .quality-preset-name {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .quality-preset.active .quality-preset-name { color: var(--accent); }
+  .quality-preset-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* Slider */
+  .quality-slider-area {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .slider-header span {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .slider-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+  }
+  .slider-range {
+    position: absolute;
+    left: 15%;
+    right: 20%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #f0c76e);
+    border-radius: 3px;
+  }
+  .slider-thumb {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 2px solid var(--accent);
+    top: -5px;
+    cursor: grab;
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .slider-caps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    gap: 12px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+  }
+  .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .stat-value.positive { color: var(--green); }
+  .stat-value.accent { color: var(--accent); }
+  .stat-comparison {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Waveform / Trim */
+  .waveform-container {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .waveform-track {
+    position: relative;
+    height: 64px;
+    background: var(--border-subtle);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .waveform-bars {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    padding: 4px 2px;
+    gap: 1.5px;
+  }
+  .waveform-bars .bar {
+    flex: 1;
+    border-radius: 1px 1px 0 0;
+    min-width: 2px;
+    transition: background 0.1s;
+  }
+  /* Trim selection overlay */
+  .waveform-trim-overlay {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    pointer-events: none;
+  }
+  .waveform-trim-overlay.left {
+    left: 0;
+    width: 12%;
+    background: rgba(14, 14, 16, 0.7);
+  }
+  .waveform-trim-overlay.right {
+    right: 0;
+    width: 8%;
+    background: rgba(14, 14, 16, 0.7);
+  }
+  .trim-handle {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: var(--accent);
+    cursor: ew-resize;
+    z-index: 2;
+    border-radius: 1px;
+    pointer-events: all;
+  }
+  .trim-handle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 20px;
+    border-radius: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .trim-handle:hover::after { opacity: 1; }
+
+  .waveform-times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    align-items: center;
+  }
+  .waveform-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .waveform-duration {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Playback controls */
+  .playback-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .playback-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.15s;
+  }
+  .playback-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .playback-btn.play {
+    width: 40px; height: 40px;
+    background: var(--accent);
+    color: #0e0e10;
+    border: none;
+    font-size: 14px;
+  }
+  .playback-btn.play:hover { background: #f0b04e; }
+</style>
+</head>
+<body>
+
+<!-- Title bar -->
+<div class="titlebar">
+  <div class="traffic-lights">
+    <span class="red"></span>
+    <span class="yellow"></span>
+    <span class="green"></span>
+  </div>
+  <div class="titlebar-text">ffmpreg</div>
+  <div style="width: 52px;"></div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <div class="app-logo">ffmpreg</div>
+  <div class="toolbar-sep"></div>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost">Settings</button>
+    <button class="btn btn-primary">Convert All</button>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="main">
+
+  <!-- Queue panel -->
+  <div class="queue-panel">
+    <div class="queue-header">
+      <h2>Queue</h2>
+      <span class="queue-count">4 items</span>
+    </div>
+
+    <div class="drop-zone">
+      <div class="drop-zone-icon">+</div>
+      <div class="drop-zone-text">Drop files here or <strong>browse</strong></div>
+    </div>
+
+    <div class="queue-list">
+      <!-- Active item -->
+      <div class="queue-item active">
+        <div class="queue-item-header">
+          <div class="queue-item-name">vacation_2024.mov</div>
+          <span class="queue-item-badge badge-converting">65%</span>
+        </div>
+        <div class="queue-item-meta">
+          <span>1.2 GB</span>
+          <span>MOV</span>
+          <span style="color: var(--text-secondary);">MP4</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 65%;"></div>
+        </div>
+      </div>
+
+      <!-- Queued item -->
+      <div class="queue-item">
+        <div class="queue-item-header">
+          <div class="queue-item-name">interview_raw.mp4</div>
+          <span class="queue-item-badge badge-queued">Queued</span>
+        </div>
+        <div class="queue-item-meta">
+          <span>450 MB</span>
+          <span>MP4</span>
+          <span style="color: var(--text-secondary);">MP3</span>
+        </div>
+      </div>
+
+      <!-- Queued item -->
+      <div class="queue-item">
+        <div class="queue-item-header">
+          <div class="queue-item-name">podcast_ep12.wav</div>
+          <span class="queue-item-badge badge-queued">Queued</span>
+        </div>
+        <div class="queue-item-meta">
+          <span>800 MB</span>
+          <span>WAV</span>
+          <span style="color: var(--text-secondary);">FLAC</span>
+        </div>
+      </div>
+
+      <!-- Done item -->
+      <div class="queue-item">
+        <div class="queue-item-header">
+          <div class="queue-item-name">thumbnail.png</div>
+          <span class="queue-item-badge badge-done">Done</span>
+        </div>
+        <div class="queue-item-meta">
+          <span>2.4 MB</span>
+          <span>PNG</span>
+          <span style="color: var(--text-secondary);">WebP</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill done" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="queue-footer">
+      <button class="btn btn-primary">Start Queue</button>
+      <button class="btn btn-ghost">Clear Done</button>
+    </div>
+  </div>
+
+  <!-- Detail panel -->
+  <div class="detail-panel">
+
+    <div class="detail-header">
+      <div class="detail-filename">vacation_2024.mov</div>
+      <div class="detail-meta">
+        <span>1920×1080</span>
+        <span class="dot"></span>
+        <span>H.264 / AAC</span>
+        <span class="dot"></span>
+        <span>1:23:45</span>
+        <span class="dot"></span>
+        <span>1.2 GB</span>
+      </div>
+    </div>
+
+    <!-- Format -->
+    <div class="detail-section">
+      <div class="section-label">Output Format</div>
+      <div class="format-pills">
+        <div class="format-pill active"><span class="pill-ext">MP4</span></div>
+        <div class="format-pill"><span class="pill-ext">MOV</span></div>
+        <div class="format-pill"><span class="pill-ext">MKV</span></div>
+        <div class="format-pill"><span class="pill-ext">WebM</span></div>
+        <div class="format-pill"><span class="pill-ext">AVI</span></div>
+        <div class="format-pill"><span class="pill-ext">GIF</span></div>
+        <div class="format-pill"><span class="pill-ext">MP3</span></div>
+        <div class="format-pill"><span class="pill-ext">FLAC</span></div>
+      </div>
+    </div>
+
+    <!-- Quality -->
+    <div class="detail-section">
+      <div class="section-label">Quality</div>
+      <div class="quality-presets">
+        <div class="quality-preset">
+          <div class="quality-preset-name">Email</div>
+          <div class="quality-preset-desc">Small file, decent quality</div>
+        </div>
+        <div class="quality-preset active">
+          <div class="quality-preset-name">Good</div>
+          <div class="quality-preset-desc">Balanced size & quality</div>
+        </div>
+        <div class="quality-preset">
+          <div class="quality-preset-name">High</div>
+          <div class="quality-predient-desc">Near-lossless</div>
+          <div class="quality-preset-desc">Larger file size</div>
+        </div>
+        <div class="quality-preset">
+          <div class="quality-preset-name">Custom</div>
+          <div class="quality-preset-desc">Fine-tune below</div>
+        </div>
+      </div>
+      <div class="quality-slider-area">
+        <div class="slider-header">
+          <span>Smaller file</span>
+          <span>Better quality</span>
+        </div>
+        <div class="slider-track">
+          <div class="slider-range"></div>
+          <div class="slider-thumb" style="left: calc(60% - 8px);"></div>
+        </div>
+        <div class="slider-caps">
+          <span>CRF 32</span>
+          <span>CRF 18</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="detail-section">
+      <div class="section-label">Estimated Output</div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Source</div>
+          <div class="stat-value">1.2 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Estimated</div>
+          <div class="stat-value accent">~380 MB</div>
+          <div class="stat-comparison">H.264, CRF 23, AAC 192k</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Savings</div>
+          <div class="stat-value positive">~68%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trim -->
+    <div class="detail-section">
+      <div class="section-label">Trim</div>
+      <div class="waveform-container">
+        <div class="waveform-track">
+          <div class="waveform-bars" id="waveform"></div>
+          <div class="waveform-trim-overlay left"></div>
+          <div class="waveform-trim-overlay right"></div>
+          <div class="trim-handle" style="left: 12%;"></div>
+          <div class="trim-handle" style="right: 8%;"></div>
+        </div>
+        <div class="waveform-times">
+          <span class="waveform-time">0:10:02</span>
+          <span class="waveform-duration">Duration: 1:06:27</span>
+          <span class="waveform-time">1:16:29</span>
+        </div>
+        <div class="playback-controls">
+          <button class="playback-btn">⏮</button>
+          <button class="playback-btn play">▶</button>
+          <button class="playback-btn">⏭</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Generate fake waveform
+  const wf = document.getElementById('waveform');
+  const barCount = 120;
+  for (let i = 0; i < barCount; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    // Create a somewhat realistic waveform pattern
+    const base = 20 + Math.sin(i * 0.15) * 15 + Math.sin(i * 0.4) * 10;
+    const noise = Math.random() * 25;
+    const h = Math.max(8, Math.min(95, base + noise));
+    bar.style.height = h + '%';
+    // Color based on position relative to trim handles
+    const pos = i / barCount * 100;
+    if (pos < 12 || pos > 92) {
+      bar.style.background = 'var(--text-muted)';
+      bar.style.opacity = '0.3';
+    } else {
+      bar.style.background = 'var(--accent)';
+      bar.style.opacity = '0.6';
+    }
+    wf.appendChild(bar);
+  }
+</script>
+
+</body>
+</html>
