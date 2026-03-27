@@ -36,4 +36,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Shell
   shellOpenFolder: (dirPath: string) => ipcRenderer.invoke('shell:open-folder', dirPath),
+
+  // Pause/Resume (stubs)
+  pauseItem: (id: string) => ipcRenderer.invoke('queue:pause-item', id),
+  resumeItem: (id: string) => ipcRenderer.invoke('queue:resume-item', id),
 });

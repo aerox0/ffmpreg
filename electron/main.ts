@@ -406,6 +406,19 @@ function registerIpcHandlers() {
     if (dirPath) shell.openPath(dirPath);
   });
 
+  // queue:pause-item (stub — worker pause not yet implemented)
+  ipcMain.handle('queue:pause-item', async (_event, id: string): Promise<void> => {
+    console.log('[IPC] pause-item stub called for', id);
+    // TODO: worker-level pause requires significant changes to encode worker
+    // This is a no-op stub for now
+  });
+
+  // queue:resume-item (stub)
+  ipcMain.handle('queue:resume-item', async (_event, id: string): Promise<void> => {
+    console.log('[IPC] resume-item stub called for', id);
+    // TODO: worker-level resume
+  });
+
   console.log('[main] IPC handlers registered');
 }
 

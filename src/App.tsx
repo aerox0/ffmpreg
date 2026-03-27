@@ -8,13 +8,14 @@ import { useSettings } from './hooks/useSettings';
 import { useToast } from './hooks/useToast';
 import { hasElectronAPI } from './hooks/useIpc';
 import { useState, useCallback } from 'react';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 function App() {
   const [showSettings, setShowSettings] = useState(false);
 
   const { toasts, exiting, addToast, dismissToast } = useToast();
 
-  const handleStatusChange = useCallback((id: string, status: string, item: { source: { fileName: string; fileSize: number; inputType: 'video' | 'audio' | 'image' }; outputSize?: number } | undefined) => {
+  const handleStatusChange = useCallback((_id: string, status: string, item: { source: { fileName: string; fileSize: number; inputType: 'video' | 'audio' | 'image' }; outputSize?: number | null } | undefined) => {
     if ((status === 'done' || status === 'failed') && item) {
       addToast({
         fileName: item.source.fileName,
@@ -44,6 +45,48 @@ function App() {
   } = useQueue(handleStatusChange);
 
   const { settings, updateSettings, pickOutputDir } = useSettings();
+
+  const handleDelete = useCallback(() => {
+    selectedIds.forEach((id) => removeItem(id));
+  }, [selectedIds, removeItem]);
+
+  const handleEnter = useCallback(() => {
+    if (!items.some(i => i.status === 'converting') && items.length > 0) {
+      startQueue();
+    }
+  }, [items, startQueue]);
+
+  const handleEscape = useCallback(() => {
+    selectItem('', false);
+  }, [selectItem]);
+
+  const handleArrowDown = useCallback(() => {
+    const idx = items.findIndex(i => i.id === activeItem?.id);
+    if (idx < items.length - 1) {
+      selectItem(items[idx + 1].id, false);
+    }
+  }, [items, activeItem, selectItem]);
+
+  const handleArrowUp = useCallback(() => {
+    const idx = items.findIndex(i => i.id === activeItem?.id);
+    if (idx > 0) {
+      selectItem(items[idx - 1].id, false);
+    }
+  }, [items, activeItem, selectItem]);
+
+  const handleSelectAll = useCallback(() => {
+    items.forEach((item) => selectItem(item.id, true));
+  }, [items, selectItem]);
+
+  useKeyboardShortcuts({
+    onDelete: handleDelete,
+    onEnter: handleEnter,
+    onEscape: handleEscape,
+    onArrowUp: handleArrowUp,
+    onArrowDown: handleArrowDown,
+    onSelectAll: handleSelectAll,
+    enabled: true,
+  });
 
   const handleOpenFolder = useCallback(async () => {
     if (!hasElectronAPI()) return;

@@ -17,6 +17,8 @@ declare global {
       updateSettings: (settings: object) => Promise<void>;
       showOpenDialog: (options: object) => Promise<string[] | null>;
       shellOpenFolder: (dirPath: string) => Promise<void>;
+      pauseItem: (id: string) => Promise<void>;
+      resumeItem: (id: string) => Promise<void>;
     } | undefined;
   }
 }
