@@ -7,7 +7,7 @@
     {"id": 3, "subject": "Task 4: Live Stats Bar", "status": "completed", "commit": "10e0a22"},
     {"id": 4, "subject": "Task 5: Overall Progress in Header", "status": "completed", "commit": "dad88be"},
     {"id": 5, "subject": "Task 6: Keyboard Shortcuts + IPC Pause/Resume Stubs", "status": "completed", "commit": "9fa304d"},
-    {"id": 6, "subject": "Task 7: Build & Verify", "status": "in_progress", "blockedBy": [0, 1, 2, 3, 4, 5]}
+    {"id": 6, "subject": "Task 7: Build & Verify", "status": "completed", "commit": "92ea1f8"}
   ],
   "lastUpdated": "2026-03-27T00:00:00.000Z"
 }
