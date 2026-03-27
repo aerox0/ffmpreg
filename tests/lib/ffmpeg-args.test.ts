@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildFfmpegArgs, needsTranscode } from '../../src/lib/ffmpeg-args.js';
-import type { QueueItem } from '../../src/types/index.js';
+import { buildFfmpegArgs, needsTranscode } from '../../src/lib/ffmpeg-args';
+import type { QueueItem } from '../../src/types/index';
 
 /** Helper to build a minimal QueueItem with sensible defaults. */
 function makeItem(overrides: Partial<QueueItem>): QueueItem {
