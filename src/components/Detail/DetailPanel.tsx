@@ -4,6 +4,7 @@ import { FormatSelector } from './FormatSelector';
 import { QualitySection } from './QualitySection';
 import { StatsRow } from './StatsRow';
 import { StreamToggle } from './StreamToggle';
+import { TrimSection } from './TrimSection';
 
 interface DetailPanelProps {
   item: QueueItem;
@@ -13,6 +14,8 @@ interface DetailPanelProps {
 export function DetailPanel({ item, onSettingsChange }: DetailPanelProps) {
   const { source, settings } = item;
   const { format, quality, trim, mode, extractStreamIndex } = settings;
+
+  const showTrim = source.inputType === 'video' || source.inputType === 'audio';
 
   return (
     <div className="detail-panel-content">
@@ -42,14 +45,12 @@ export function DetailPanel({ item, onSettingsChange }: DetailPanelProps) {
 
       <StatsRow source={source} settings={settings} />
 
-      {trim && (
-        <div className="detail-section trim-info">
-          <div className="section-label">Trim</div>
-          <div className="trim-times">
-            {trim.start.toFixed(1)}s → {trim.end.toFixed(1)}s
-            ({(trim.end - trim.start).toFixed(1)}s)
-          </div>
-        </div>
+      {showTrim && (
+        <TrimSection
+          source={source}
+          trim={trim}
+          onTrimChange={(newTrim) => onSettingsChange({ trim: newTrim })}
+        />
       )}
     </div>
   );
