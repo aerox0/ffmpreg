@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "main": "dist-electron/main.js",
+  "main": "dist-electron/electron/main.js",
   "scripts": {
     "dev": "vite",
-    "dev:electron": "tsc -p tsconfig.electron.json && electron dist-electron/main.js",
+    "dev:electron": "tsc -p tsconfig.electron.json && electron dist-electron/electron/main.js",
     "build": "tsc -b && vite build && tsc -p tsconfig.electron.json",
     "build:mac": "bun run build && electron-builder --mac",
     "build:linux": "bun run build && electron-builder --linux",

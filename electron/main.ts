@@ -336,21 +336,26 @@ function needsTranscodeFromArgs(args: string[]): boolean {
 // -- files:browse ------------------------------------------------------------
 
 ipcMain.handle('files:browse', async (): Promise<string[] | null> => {
-  const result = await dialog.showOpenDialog(mainWindow!, {
-    properties: ['openFile', 'multiSelections'],
-    filters: [
-      {
-        name: 'Media Files',
-        extensions: [
-          'mp4', 'mkv', 'webm', 'mov', 'avi', 'flv', 'wmv', 'm4v',
-          'mp3', 'aac', 'wav', 'flac', 'ogg', 'm4a', 'wma', 'opus',
-          'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp',
-        ],
-      },
-      { name: 'All Files', extensions: ['*'] },
-    ],
-  });
-  return result.canceled ? null : result.filePaths;
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [
+        {
+          name: 'Media Files',
+          extensions: [
+            'mp4', 'mkv', 'webm', 'mov', 'avi', 'flv', 'wmv', 'm4v',
+            'mp3', 'aac', 'wav', 'flac', 'ogg', 'm4a', 'wma', 'opus',
+            'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp',
+          ],
+        },
+        { name: 'All Files', extensions: ['*'] },
+      ],
+    });
+    return result.canceled ? null : result.filePaths;
+  } catch (err) {
+    console.error('files:browse error:', err);
+    return null;
+  }
 });
 
 // -- files:add ---------------------------------------------------------------
