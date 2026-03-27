@@ -69,6 +69,47 @@ let currentItemId: string | null = null;
 // ---------------------------------------------------------------------------
 
 let mainWindow: BrowserWindow | null = null;
+let viteDevServer: ReturnType<typeof spawn> | null = null;
+
+function startViteDevServer(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const projectRoot = path.resolve(__dirname, '..');
+    viteDevServer = spawn('npx', ['vite', '--port', '5173'], {
+      cwd: projectRoot,
+      stdio: 'pipe',
+      shell: true,
+    });
+
+    let started = false;
+    viteDevServer.stdout?.on('data', (data: Buffer) => {
+      const msg = data.toString();
+      if (!started && msg.includes('Local:')) {
+        started = true;
+        resolve();
+      }
+    });
+
+    viteDevServer.stderr?.on('data', (data: Buffer) => {
+      const msg = data.toString();
+      if (!started && (msg.includes('Local:') || msg.includes('ready'))) {
+        started = true;
+        resolve();
+      }
+    });
+
+    viteDevServer.on('error', (err) => {
+      if (!started) reject(err);
+    });
+
+    // Timeout fallback
+    setTimeout(() => {
+      if (!started) {
+        started = true;
+        resolve();
+      }
+    }, 10000);
+  });
+}
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -518,11 +559,23 @@ ipcMain.handle('window:close', () => mainWindow?.close());
 // App lifecycle
 // ---------------------------------------------------------------------------
 
-app.whenReady().then(createWindow);
+app.whenReady().then(async () => {
+  if (isDev) {
+    await startViteDevServer();
+  }
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+app.on('before-quit', () => {
+  if (viteDevServer) {
+    viteDevServer.kill();
+    viteDevServer = null;
   }
 });
 
