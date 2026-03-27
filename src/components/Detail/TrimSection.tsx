@@ -60,35 +60,27 @@ export function TrimSection({ item, onSettingsChange }: TrimSectionProps) {
   const api = useIpc();
   const { source, settings } = item;
 
-  // Only show for video/audio
-  const isVisible = source.inputType === 'video' || source.inputType === 'audio';
-  if (!isVisible) return null;
-
+  // Current trim state (always computed, even if component will return null)
   const duration = source.duration;
-  if (duration <= 0) return null;
+  const trim = settings.trim ?? { start: 0, end: duration || 1 };
 
-  // Current trim state
-  const trim = settings.trim ?? { start: 0, end: duration };
-
-  // Waveform data
+  // All hooks must be called before any early returns (Rules of Hooks)
   const [waveformData, setWaveformData] = useState<number[] | null>(null);
   const [waveformLoading, setWaveformLoading] = useState(false);
-
-  // Playback
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  // Editing state for time inputs
   const [editingStart, setEditingStart] = useState(false);
   const [editingEnd, setEditingEnd] = useState(false);
   const [startInput, setStartInput] = useState('');
   const [endInput, setEndInput] = useState('');
-
-  // Canvas + drag refs
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef<'start' | 'end' | null>(null);
   const [canvasWidth, setCanvasWidth] = useState(0);
+
+  // Visibility guard — after all hooks
+  const isVisible = source.inputType === 'video' || source.inputType === 'audio';
+  if (!isVisible || duration <= 0) return null;
 
   /* ---------- Fetch waveform on mount / item change ---------- */
 
@@ -182,10 +174,10 @@ export function TrimSection({ item, onSettingsChange }: TrimSectionProps) {
 
         // Color based on whether in selected region
         if (x >= startPx && x <= endPx) {
-          ctx.fillStyle = 'var(--accent, #e8a23a)';
+          ctx.fillStyle = '#e8a23a';
           ctx.globalAlpha = 0.9;
         } else {
-          ctx.fillStyle = 'var(--text-secondary, #888)';
+          ctx.fillStyle = '#888';
           ctx.globalAlpha = 0.3;
         }
 
@@ -353,7 +345,7 @@ export function TrimSection({ item, onSettingsChange }: TrimSectionProps) {
       setIsPlaying(false);
     } else {
       // Use file:// protocol for local files in Electron
-      audio.src = `file://${source.path}`;
+      audio.src = `file://${source.path.split('/').map(encodeURIComponent).join('/')}`;
       audio.currentTime = trim.start;
       audio.play().catch(() => {
         setIsPlaying(false);
