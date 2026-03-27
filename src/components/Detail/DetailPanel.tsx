@@ -5,6 +5,7 @@ import { StreamToggle } from './StreamToggle';
 import { FormatSelector } from './FormatSelector';
 import { QualitySection } from './QualitySection';
 import { StatsRow } from './StatsRow';
+import { TrimSection } from './TrimSection';
 
 interface DetailPanelProps {
   item: QueueItem | null;
@@ -53,7 +54,7 @@ export function DetailPanel({ item, onSettingsChange }: DetailPanelProps) {
           </>
         )}
         <StatsRow item={item} />
-        {/* TrimSection will be added in Task 9 */}
+        <TrimSection item={item} onSettingsChange={handleSettingsChange} />
       </div>
     </div>
   );
