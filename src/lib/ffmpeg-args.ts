@@ -1,5 +1,5 @@
 import type { QueueItem } from '../types/index';
-import { getCodecForContainer } from './codecs';
+import { getCodecForContainer } from './codecs.js';
 
 export function needsTranscode(sourceCodec: string, targetContainer: string): boolean {
   const target = getCodecForContainer(targetContainer);

@@ -1,5 +1,8 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import { Worker } from 'node:worker_threads';
 import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
 import { probeFile } from './ffprobe.js';

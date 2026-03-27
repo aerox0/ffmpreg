@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "Desktop ffmpeg frontend with waveform trimming",
   "author": "ffmpreg",
-  "main": "dist-electron/main.js",
+  "main": "dist-electron/electron/main.js",
   "type": "module",
   "scripts": {
     "dev": "vite",

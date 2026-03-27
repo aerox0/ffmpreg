@@ -1,5 +1,5 @@
 import type { PresetName, TrimRange } from '../types/index';
-import { getCompressionRatio } from './presets';
+import { getCompressionRatio } from './presets.js';
 
 export function estimateOutputSize(
   source: { fileSize: number; duration: number },
