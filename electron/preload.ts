@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   addFiles: (paths: string[]) => ipcRenderer.invoke('files:add', paths),
   removeItem: (id: string) => ipcRenderer.invoke('item:remove', id),
   clearDone: () => ipcRenderer.invoke('queue:clearDone'),
+  browseFiles: () => ipcRenderer.invoke('files:browse'),
 
   // Item settings
   updateItemSettings: (id: string, settings: Record<string, unknown>) =>

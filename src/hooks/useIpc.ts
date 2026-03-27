@@ -4,6 +4,7 @@ export interface ElectronAPI {
   addFiles: (paths: string[]) => Promise<QueueItem[]>;
   removeItem: (id: string) => Promise<void>;
   clearDone: () => Promise<void>;
+  browseFiles: () => Promise<string[] | null>;
   updateItemSettings: (id: string, settings: Record<string, unknown>) => Promise<void>;
   startQueue: () => Promise<void>;
   cancelItem: (id: string) => Promise<void>;

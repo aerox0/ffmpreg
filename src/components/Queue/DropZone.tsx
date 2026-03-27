@@ -1,11 +1,12 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useIpc } from '../../hooks/useIpc';
 
 interface DropZoneProps {
   onFiles: (paths: string[]) => void;
 }
 
 export function DropZone({ onFiles }: DropZoneProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const api = useIpc();
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -20,47 +21,28 @@ export function DropZone({ onFiles }: DropZoneProps) {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const paths: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if ('path' in file && typeof (file as File & { path: string }).path === 'string') {
-          paths.push((file as File & { path: string }).path);
-        }
-      }
-      if (paths.length > 0) {
-        onFiles(paths);
-      }
-    }
-  }, [onFiles]);
+    if (!api) return;
 
-  const handleBrowse = useCallback(() => {
-    inputRef.current?.click();
-  }, []);
-
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const paths: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if ('path' in file && typeof (file as File & { path: string }).path === 'string') {
-          paths.push((file as File & { path: string }).path);
-        }
-      }
-      if (paths.length > 0) {
-        onFiles(paths);
-      }
+    // In Electron with contextIsolation, File.path is not available.
+    // Fall back to the native browse dialog.
+    const paths = await api.browseFiles();
+    if (paths && paths.length > 0) {
+      onFiles(paths);
     }
-    // Reset so the same file can be selected again
-    e.target.value = '';
-  }, [onFiles]);
+  }, [api, onFiles]);
+
+  const handleBrowse = useCallback(async () => {
+    if (!api) return;
+    const paths = await api.browseFiles();
+    if (paths && paths.length > 0) {
+      onFiles(paths);
+    }
+  }, [api, onFiles]);
 
   return (
     <div
@@ -69,13 +51,6 @@ export function DropZone({ onFiles }: DropZoneProps) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <input
-        ref={inputRef}
-        type="file"
-        multiple
-        onChange={handleInputChange}
-        style={{ display: 'none' }}
-      />
       <div className="dropzone__content">
         <div className="dropzone__icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
