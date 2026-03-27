@@ -11,6 +11,10 @@ const CODEC_TABLE: Record<string, { video: string | null; audio: string | null }
   wav:  { video: null,        audio: 'pcm_s16le' },
   flac: { video: null,        audio: 'flac' },
   ogg:  { video: null,        audio: 'libvorbis' },
+  // Image formats
+  png:  { video: null,        audio: null },
+  jpeg: { video: null,        audio: null },
+  webp: { video: null,        audio: null },
 };
 
 export function getCodecForContainer(
