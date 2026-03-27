@@ -43,4 +43,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getSettings: () => ipcRenderer.invoke('settings:get'),
   updateSettings: (settings: Record<string, unknown>) =>
     ipcRenderer.invoke('settings:update', settings),
+  browseDirectory: () => ipcRenderer.invoke('settings:browse-directory'),
 });

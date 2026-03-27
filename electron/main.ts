@@ -1,4 +1,5 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import Store from 'electron-store';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +26,20 @@ const ffmpeg = ffmpegPath as unknown as string;
 if (!ffmpeg) {
   throw new Error('ffmpeg-static did not resolve a binary path');
 }
+
+// ---------------------------------------------------------------------------
+// Persistent settings store
+// ---------------------------------------------------------------------------
+
+const store = new Store<{
+  outputDir: string | null;
+  overwriteBehavior: 'rename' | 'prompt' | 'skip';
+}>({
+  defaults: {
+    outputDir: null,
+    overwriteBehavior: 'rename',
+  },
+});
 
 // ---------------------------------------------------------------------------
 // In-memory queue
@@ -466,20 +481,29 @@ ipcMain.handle('file:waveform', async (_event, filePath: string): Promise<number
   });
 });
 
-// -- settings:get (stub) -----------------------------------------------------
+// -- settings:get -----------------------------------------------------------
 
 ipcMain.handle('settings:get', async (): Promise<Record<string, unknown>> => {
-  return {};
+  return store.store as Record<string, unknown>;
 });
 
-// -- settings:update (stub) --------------------------------------------------
+// -- settings:update ---------------------------------------------------------
 
 ipcMain.handle(
   'settings:update',
-  async (_event, _settings: Record<string, unknown>): Promise<void> => {
-    // Stub — will be implemented in Task 10
+  async (_event, settings: Record<string, unknown>): Promise<void> => {
+    Object.entries(settings).forEach(([k, v]) => store.set(k, v));
   },
 );
+
+// -- settings:browse-directory -----------------------------------------------
+
+ipcMain.handle('settings:browse-directory', async () => {
+  const result = await dialog.showOpenDialog(mainWindow!, {
+    properties: ['openDirectory'],
+  });
+  return result.filePaths[0] ?? null;
+});
 
 // ---------------------------------------------------------------------------
 // App lifecycle

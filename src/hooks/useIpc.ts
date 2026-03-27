@@ -14,6 +14,7 @@ export interface ElectronAPI {
   getWaveform: (filePath: string) => Promise<number[]>;
   getSettings: () => Promise<Record<string, unknown>>;
   updateSettings: (settings: Record<string, unknown>) => Promise<void>;
+  browseDirectory: () => Promise<string | null>;
 }
 
 declare global {
