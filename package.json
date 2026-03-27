@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:electron": "bun run electron/main.ts",
+    "dev:electron": "bunx tsc -p tsconfig.electron.json && electron .",
     "build": "tsc -b && vite build && tsc -p tsconfig.electron.json",
     "build:win": "bun run build && electron-builder --win",
     "lint": "eslint .",
