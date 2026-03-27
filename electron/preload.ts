@@ -44,4 +44,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   updateSettings: (settings: Record<string, unknown>) =>
     ipcRenderer.invoke('settings:update', settings),
   browseDirectory: () => ipcRenderer.invoke('settings:browse-directory'),
+
+  // Window controls
+  minimizeWindow: () => ipcRenderer.invoke('window:minimize'),
+  maximizeWindow: () => ipcRenderer.invoke('window:maximize'),
+  closeWindow: () => ipcRenderer.invoke('window:close'),
 });

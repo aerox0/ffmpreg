@@ -505,6 +505,15 @@ ipcMain.handle('settings:browse-directory', async () => {
   return result.filePaths[0] ?? null;
 });
 
+// -- window controls ----------------------------------------------------------
+
+ipcMain.handle('window:minimize', () => mainWindow?.minimize());
+ipcMain.handle('window:maximize', () => {
+  if (mainWindow?.isMaximized()) mainWindow.unmaximize();
+  else mainWindow?.maximize();
+});
+ipcMain.handle('window:close', () => mainWindow?.close());
+
 // ---------------------------------------------------------------------------
 // App lifecycle
 // ---------------------------------------------------------------------------

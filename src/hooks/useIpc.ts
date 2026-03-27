@@ -15,6 +15,9 @@ export interface ElectronAPI {
   getSettings: () => Promise<Record<string, unknown>>;
   updateSettings: (settings: Record<string, unknown>) => Promise<void>;
   browseDirectory: () => Promise<string | null>;
+  minimizeWindow: () => Promise<void>;
+  maximizeWindow: () => Promise<void>;
+  closeWindow: () => Promise<void>;
 }
 
 declare global {

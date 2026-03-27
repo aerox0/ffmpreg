@@ -88,7 +88,7 @@ export function QueueItemRow({ item, selected, onSelect, onSelectRange, onRemove
 
   return (
     <div
-      className={`queue-item ${selected ? 'queue-item--selected' : ''}`}
+      className={`queue-item ${selected ? 'queue-item--selected' : ''} ${item.status === 'failed' ? 'queue-item--failed' : ''} ${item.status === 'done' ? 'queue-item--done' : ''}`}
       onClick={handleClick}
     >
       <div className="queue-item__info">
@@ -106,6 +106,14 @@ export function QueueItemRow({ item, selected, onSelect, onSelectRange, onRemove
               </button>
             )}
             {item.status === 'failed' && (
+              <button className="queue-item__btn queue-item__btn--retry" onClick={handleRetry} title="Retry">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="23 4 23 10 17 10" />
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                </svg>
+              </button>
+            )}
+            {item.status === 'cancelled' && (
               <button className="queue-item__btn queue-item__btn--retry" onClick={handleRetry} title="Retry">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="23 4 23 10 17 10" />
@@ -137,7 +145,10 @@ export function QueueItemRow({ item, selected, onSelect, onSelectRange, onRemove
         </div>
         {item.status === 'done' && item.outputSize !== null && item.outputSize > 0 && (
           <div className="queue-item__result-row">
-            {formatBytes(item.source.fileSize)} &rarr; {formatBytes(item.outputSize)}, {formatSizeComparison(item.outputSize, item.source.fileSize)}
+            <span className="queue-item__result-size">{formatBytes(item.source.fileSize)}</span>
+            <span className="queue-item__result-arrow">&rarr;</span>
+            <span className="queue-item__result-size">{formatBytes(item.outputSize)}</span>
+            <span className="queue-item__result-pct">({formatSizeComparison(item.outputSize, item.source.fileSize)})</span>
           </div>
         )}
         {item.status === 'failed' && item.error && (
