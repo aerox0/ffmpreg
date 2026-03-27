@@ -1,21 +1,18 @@
 {
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.electron.tsbuildinfo",
     "target": "ES2023",
     "lib": ["ES2023"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "types": ["node"],
-    "outDir": "dist-electron",
+    "outDir": "dist-electron/electron",
     "noEmit": false,
     "declaration": false,
     "skipLibCheck": true,
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleDetection": "force",
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["electron/"],
-  "exclude": ["electron/preload.ts"]
+  "include": ["electron/preload.ts"]
 }

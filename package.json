@@ -8,8 +8,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:electron": "bunx tsc -p tsconfig.electron.json && electron .",
-    "build": "tsc -b && vite build && tsc -p tsconfig.electron.json",
+    "dev:electron": "bunx tsc -p tsconfig.electron.json && bunx tsc -p tsconfig.preload.json && mv dist-electron/electron/preload.js dist-electron/electron/preload.cjs 2>/dev/null; electron .",
+    "build": "tsc -b && vite build && tsc -p tsconfig.electron.json && bunx tsc -p tsconfig.preload.json && mv dist-electron/electron/preload.js dist-electron/electron/preload.cjs 2>/dev/null || true",
     "build:win": "bun run build && electron-builder --win",
     "lint": "eslint .",
     "preview": "vite preview",

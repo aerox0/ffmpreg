@@ -62,7 +62,7 @@ function createWindow() {
     frame: false,
     backgroundColor: '#1a1a1a',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
     },
