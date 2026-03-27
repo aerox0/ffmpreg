@@ -491,6 +491,11 @@ ipcMain.handle('item:retry', async (_event, id: string): Promise<void> => {
 // -- file:waveform -----------------------------------------------------------
 
 ipcMain.handle('file:waveform', async (_event, filePath: string): Promise<number[]> => {
+  // Don't attempt waveform extraction for image files
+  const ext = path.extname(filePath).toLowerCase();
+  const imageExts = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.svg', '.ico', '.tiff', '.tif']);
+  if (imageExts.has(ext)) return [];
+
   return new Promise((resolve, reject) => {
     const args = [
       '-i', filePath,
@@ -514,7 +519,8 @@ ipcMain.handle('file:waveform', async (_event, filePath: string): Promise<number
 
     child.on('close', (code) => {
       if (code !== 0) {
-        reject(new Error(`ffmpeg exited with code ${code}`));
+        // File has no audio stream (e.g. images) — return empty waveform
+        resolve([]);
         return;
       }
 

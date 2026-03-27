@@ -1,22 +1,20 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import path from 'node:path';
-import ffmpegPath from 'ffmpeg-static';
+import { path as ffprobePath } from 'ffprobe-static';
 import type { SourceMeta, MediaStream, InputType } from '../src/types/index';
 
 const execFileAsync = promisify(execFile);
 
 // ---------------------------------------------------------------------------
-// ffprobe binary path — reuse ffmpeg-static which bundles ffprobe alongside
+// ffprobe binary path
 // ---------------------------------------------------------------------------
 
 function getFfprobePath(): string {
-  // ffmpeg-static exposes the ffmpeg binary path; ffprobe lives alongside it
-  const ffmpeg = ffmpegPath as unknown as string;
-  if (!ffmpeg) {
-    throw new Error('ffmpeg-static did not resolve a binary path');
+  if (!ffprobePath) {
+    throw new Error('ffprobe-static did not resolve a binary path');
   }
-  return ffmpeg.replace(/ffmpeg[^/]*$/, 'ffprobe');
+  return ffprobePath;
 }
 
 // ---------------------------------------------------------------------------
@@ -106,7 +104,7 @@ export function parseFfprobeOutput(
       ['mjpeg', 'png', 'webp', 'bmp', 'tiff', 'gif'].includes(
         String(firstVideo.codec_name),
       );
-    if (isImageCodec && (isNaN(dur) || dur === 0)) {
+    if (isImageCodec && (isNaN(dur) || dur < 1)) {
       inputType = 'image';
     } else {
       inputType = 'video';

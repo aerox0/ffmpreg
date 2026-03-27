@@ -87,10 +87,9 @@ function App() {
 
   const handleDetailSettingsChange = useCallback(
     (id: string, settings: Partial<OutputSettings>) => {
-      if (!api) return;
-      api.updateItemSettings(id, settings as Record<string, unknown>);
+      queue.updateItemSettings(id, settings);
     },
-    [api],
+    [queue],
   );
 
   return (
