@@ -1394,3 +1394,63 @@
   background: var(--danger-dim);
   color: var(--danger);
 }
+
+/* ─── Trim Section Hover & Playhead ─────────────────────────────────────────── */
+
+.trim-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.trim-tooltip {
+  position: absolute;
+  top: -28px;
+  transform: translateX(-50%);
+  background: var(--bg-4);
+  color: var(--text-h);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  z-index: 4;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.trim-handle-bar {
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s;
+}
+
+.trim-handle:hover .trim-handle-bar {
+  transform: scaleX(1.3);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.trim-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg, transparent,
+    rgba(240, 160, 80, 0.06) 30%,
+    rgba(240, 160, 80, 0.08) 50%,
+    rgba(240, 160, 80, 0.06) 70%,
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: regionShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: var(--radius-md);
+}
+
+@keyframes regionShimmer {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 0%; }
+}

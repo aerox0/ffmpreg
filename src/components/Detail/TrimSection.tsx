@@ -25,6 +25,8 @@ export function TrimSection({ source, trim, onTrimChange }: TrimSectionProps) {
   const [localTrim, setLocalTrim] = useState<TrimRange>(
     trim ?? { start: 0, end: source.duration },
   );
+  const [hoverTime, setHoverTime] = useState<number | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
 
   // Fetch waveform data
   useEffect(() => {
@@ -149,7 +151,18 @@ export function TrimSection({ source, trim, onTrimChange }: TrimSectionProps) {
 
       {!loading && (
         <>
-          <div className="trim-container" ref={containerRef}>
+          <div
+            className="trim-container"
+            ref={containerRef}
+            onMouseMove={(e) => {
+              const rect = containerRef.current?.getBoundingClientRect();
+              if (!rect) return;
+              const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+              setHoverTime(frac * source.duration);
+            }}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => { setIsHovering(false); setHoverTime(null); }}
+          >
             <canvas ref={canvasRef} className="waveform-canvas" />
 
             {/* Start handle */}
@@ -169,6 +182,26 @@ export function TrimSection({ source, trim, onTrimChange }: TrimSectionProps) {
             >
               <div className="trim-handle-bar" />
             </div>
+
+            {isHovering && hoverTime != null && containerRef.current && (
+              <>
+                <div
+                  className="trim-playhead"
+                  style={{ left: `${(hoverTime / source.duration) * 100}%` }}
+                />
+                <div
+                  className="trim-tooltip"
+                  style={{
+                    left: Math.min(
+                      (hoverTime / source.duration) * containerRef.current.getBoundingClientRect().width,
+                      containerRef.current.getBoundingClientRect().width - 50
+                    ),
+                  }}
+                >
+                  {formatTime(hoverTime)}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="trim-times-row">
