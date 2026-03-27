@@ -45,7 +45,7 @@ function snapToFrame(time: number, frameRate: number): number {
 }
 
 const MIN_SELECTION = 0.5; // minimum trim length in seconds
-const HANDLE_WIDTH = 6;
+const HANDLE_WIDTH = 8;
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                         */
@@ -174,11 +174,11 @@ export function TrimSection({ item, onSettingsChange }: TrimSectionProps) {
 
         // Color based on whether in selected region
         if (x >= startPx && x <= endPx) {
-          ctx.fillStyle = '#e8a23a';
-          ctx.globalAlpha = 0.9;
+          ctx.fillStyle = '#f59e0b';
+          ctx.globalAlpha = 0.85;
         } else {
-          ctx.fillStyle = '#888';
-          ctx.globalAlpha = 0.3;
+          ctx.fillStyle = '#55555f';
+          ctx.globalAlpha = 0.35;
         }
 
         ctx.fillRect(x, y, Math.max(1, barWidth - 0.5), barH);
@@ -186,12 +186,12 @@ export function TrimSection({ item, onSettingsChange }: TrimSectionProps) {
       ctx.globalAlpha = 1;
     } else {
       // No audio — draw flat timeline
-      ctx.fillStyle = '#2a2a4a';
+      ctx.fillStyle = '#1e1e24';
       ctx.fillRect(0, h / 2 - 1, w, 2);
     }
 
     // Dimmed overlays for trimmed regions
-    ctx.fillStyle = 'rgba(26, 26, 46, 0.65)';
+    ctx.fillStyle = 'rgba(20, 20, 23, 0.65)';
     // Left overlay
     if (startPx > 0) {
       ctx.fillRect(0, 0, startPx, h);
@@ -202,7 +202,7 @@ export function TrimSection({ item, onSettingsChange }: TrimSectionProps) {
     }
 
     // Selected region highlight border lines
-    ctx.strokeStyle = '#e8a23a';
+    ctx.strokeStyle = '#f59e0b';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(startPx, 0);

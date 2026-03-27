@@ -9,6 +9,7 @@ type OverwriteBehavior = 'rename' | 'prompt' | 'skip';
 export function SettingsModal({ onClose }: SettingsModalProps) {
   const [outputDir, setOutputDir] = useState<string | null>(null);
   const [overwriteBehavior, setOverwriteBehavior] = useState<OverwriteBehavior>('rename');
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     const api = window.electronAPI;
@@ -31,6 +32,11 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
     }
   }, []);
 
+  const handleClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(onClose, 180);
+  }, [onClose]);
+
   const handleSave = useCallback(async () => {
     const api = window.electronAPI;
     if (!api) return;
@@ -39,19 +45,19 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
       outputDir,
       overwriteBehavior,
     });
-    onClose();
-  }, [outputDir, overwriteBehavior, onClose]);
+    handleClose();
+  }, [outputDir, overwriteBehavior, handleClose]);
 
   const handleReset = useCallback(() => {
     setOutputDir(null);
   }, []);
 
   return (
-    <div className="settings-modal__overlay" onClick={onClose}>
-      <div className="settings-modal__card" onClick={(e) => e.stopPropagation()}>
+    <div className={`settings-modal__overlay ${closing ? 'settings-modal__overlay--closing' : ''}`} onClick={handleClose}>
+      <div className={`settings-modal__card ${closing ? 'settings-modal__card--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="settings-modal__header">
           <h2 className="settings-modal__title">Settings</h2>
-          <button className="settings-modal__close" onClick={onClose} title="Close">
+          <button className="settings-modal__close" onClick={handleClose} title="Close">
             <svg width="14" height="14" viewBox="0 0 14 14">
               <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" strokeWidth="1.5" />
               <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" strokeWidth="1.5" />
@@ -124,7 +130,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
         </div>
 
         <div className="settings-modal__footer">
-          <button className="btn btn--ghost" onClick={onClose}>
+          <button className="btn btn--ghost" onClick={handleClose}>
             Cancel
           </button>
           <button className="btn btn--primary" onClick={handleSave}>

@@ -87,6 +87,7 @@ export function QualitySection({ item, onSettingsChange }: QualitySectionProps) 
           max={range.max}
           value={quality.crf}
           onChange={(e) => handleCrfChange(Number(e.target.value))}
+          style={{ '--slider-fill': `${((quality.crf - range.min) / (range.max - range.min)) * 100}%` } as React.CSSProperties}
         />
         <div className="quality-section__slider-range">
           <span>{range.min}</span>
@@ -129,6 +130,7 @@ export function QualitySection({ item, onSettingsChange }: QualitySectionProps) 
           max={imageRange.max}
           value={quality.crf}
           onChange={(e) => handleImageQualityChange(Number(e.target.value))}
+          style={{ '--slider-fill': `${((quality.crf - imageRange.min) / (imageRange.max - imageRange.min)) * 100}%` } as React.CSSProperties}
         />
         <div className="quality-section__slider-range">
           <span>{imageRange.min}</span>
@@ -170,6 +172,7 @@ export function QualitySection({ item, onSettingsChange }: QualitySectionProps) 
             step={32}
             value={quality.audioBitrate}
             onChange={(e) => handleAudioBitrateChange(Number(e.target.value))}
+            style={{ '--slider-fill': `${((quality.audioBitrate - bitrateRange.min) / (bitrateRange.max - bitrateRange.min)) * 100}%` } as React.CSSProperties}
           />
           <div className="quality-section__slider-range">
             <span>{bitrateRange.min} kbps</span>

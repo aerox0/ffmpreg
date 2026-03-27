@@ -150,8 +150,8 @@ export function parseFfprobeOutput(
 /**
  * Probe a media file using ffprobe and return parsed metadata.
  */
-export async function probeFile(filePath: string): Promise<SourceMeta> {
-  const ffprobe = getFfprobePath();
+export async function probeFile(filePath: string, ffprobeBin?: string): Promise<SourceMeta> {
+  const ffprobe = ffprobeBin ?? getFfprobePath();
 
   const args = [
     '-v', 'quiet',

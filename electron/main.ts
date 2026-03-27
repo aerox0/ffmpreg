@@ -7,6 +7,7 @@ import { Worker } from 'node:worker_threads';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import ffmpegPath from 'ffmpeg-static';
+import { path as ffprobeStaticPath } from 'ffprobe-static';
 
 import type { QueueItem, OutputSettings, QualitySettings } from '../src/types/index';
 import { probeFile } from './ffprobe.js';
@@ -22,9 +23,33 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isDev = !app.isPackaged;
 
-const ffmpeg = ffmpegPath as unknown as string;
+// Binaries live inside the asar archive but can't be executed from there.
+// asarUnpack extracts them to .asar.unpacked/ — redirect paths accordingly.
+function toRealBinaryPath(p: string): string {
+  if (!app.isPackaged) return p;
+  return p.replace(/\.asar([\\/])/, '.asar.unpacked$1');
+}
+
+let ffmpeg = toRealBinaryPath(ffmpegPath as unknown as string);
+const ffprobe = toRealBinaryPath(ffprobeStaticPath);
+
+// Cross-platform fallback: if the resolved ffmpeg path doesn't exist
+// (e.g. installed on Linux but running on Windows), try the alternate name.
+if (ffmpeg && !fs.existsSync(ffmpeg)) {
+  const alt = ffmpeg.endsWith('.exe')
+    ? ffmpeg.slice(0, -4)           // ffmpeg.exe → ffmpeg
+    : ffmpeg + '.exe';              // ffmpeg → ffmpeg.exe
+  if (fs.existsSync(alt)) {
+    console.warn(`ffmpeg: resolved path not found (${ffmpeg}), using ${alt}`);
+    ffmpeg = alt;
+  }
+}
+
 if (!ffmpeg) {
-  throw new Error('ffmpeg-static did not resolve a binary path');
+  throw new Error('ffmpeg binary not found');
+}
+if (!ffprobe) {
+  throw new Error('ffprobe binary not found');
 }
 
 // ---------------------------------------------------------------------------
@@ -74,7 +99,7 @@ let viteDevServer: ReturnType<typeof spawn> | null = null;
 function startViteDevServer(): Promise<void> {
   return new Promise((resolve, reject) => {
     const projectRoot = path.resolve(__dirname, '..');
-    viteDevServer = spawn('npx', ['vite', '--port', '5173'], {
+    viteDevServer = spawn('npx', ['vite', '--port', '5173', '--force'], {
       cwd: projectRoot,
       stdio: 'pipe',
       shell: true,
@@ -116,7 +141,7 @@ function createWindow(): void {
     width: 1200,
     height: 800,
     frame: false,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#141417',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -125,10 +150,17 @@ function createWindow(): void {
   });
 
   if (isDev) {
-    mainWindow.loadURL('http://localhost:5173');
+    const loadDev = () => {
+      if (!mainWindow) return;
+      mainWindow.loadURL('http://localhost:5173').catch(() => {
+        // Retry if Vite isn't ready yet
+        setTimeout(loadDev, 500);
+      });
+    };
+    loadDev();
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
   }
 
   mainWindow.on('closed', () => {
@@ -215,6 +247,7 @@ function processNextInQueue(): void {
   const workerPath = path.join(__dirname, 'workers', 'encode.js');
   const worker = new Worker(workerPath, {
     workerData: {
+      ffmpegPath: ffmpeg,
       args,
       outputPath,
       isStreamCopy,
@@ -364,7 +397,7 @@ ipcMain.handle('files:add', async (_event, paths: string[]): Promise<QueueItem[]
   const items: QueueItem[] = [];
 
   for (const filePath of paths) {
-    const source = await probeFile(filePath);
+    const source = await probeFile(filePath, ffprobe);
     const item: QueueItem = {
       id: randomUUID(),
       source,

@@ -12,15 +12,9 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { parentPort, workerData } from 'node:worker_threads';
 import { statSync } from 'node:fs';
-import ffmpegPath from 'ffmpeg-static';
-
-const ffmpeg = ffmpegPath as unknown as string;
-
-if (!ffmpeg) {
-  throw new Error('ffmpeg-static did not resolve a binary path');
-}
 
 interface EncodeMessage {
+  ffmpegPath: string;
   args: string[];
   outputPath: string;
   isStreamCopy: boolean;
@@ -78,7 +72,7 @@ if (workerData) {
 }
 
 function run(config: EncodeMessage): void {
-  const { args, outputPath, isStreamCopy, duration } = config;
+  const { ffmpegPath: ffmpeg, args, outputPath, isStreamCopy, duration } = config;
 
   if (isStreamCopy) {
     send({ type: 'indeterminate' });

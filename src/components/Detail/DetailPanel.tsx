@@ -17,7 +17,7 @@ export function DetailPanel({ item, onSettingsChange }: DetailPanelProps) {
     return (
       <div className="detail-panel">
         <div className="detail-panel__placeholder">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.3">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.3">
             <rect x="2" y="2" width="20" height="20" rx="2" ry="2" />
             <line x1="9" y1="2" x2="9" y2="22" />
           </svg>
@@ -44,16 +44,22 @@ export function DetailPanel({ item, onSettingsChange }: DetailPanelProps) {
         <FileHeader source={item.source} />
         <StreamToggle item={item} onSettingsChange={handleSettingsChange} />
         {item.settings.mode === 'convert' && (
-          <>
+          <div className="detail-section">
             <FormatSelector
               formats={formats}
               activeFormat={currentFormat}
               onFormatChange={handleFormatChange}
             />
-            <QualitySection item={item} onSettingsChange={handleSettingsChange} />
-          </>
+          </div>
         )}
-        <StatsRow item={item} />
+        {item.settings.mode === 'convert' && (
+          <div className="detail-section">
+            <QualitySection item={item} onSettingsChange={handleSettingsChange} />
+          </div>
+        )}
+        <div className="detail-section">
+          <StatsRow item={item} />
+        </div>
         <TrimSection item={item} onSettingsChange={handleSettingsChange} />
       </div>
     </div>

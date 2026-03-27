@@ -64,6 +64,11 @@ export function QueuePanel({ queue }: QueuePanelProps) {
       <div className="queue-panel__list">
         {sortedItems.length === 0 ? (
           <div className="queue-panel__empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.2, marginBottom: 4 }}>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
             <p>No files in queue</p>
             <p className="queue-panel__empty-hint">Drop video or audio files above to get started</p>
           </div>

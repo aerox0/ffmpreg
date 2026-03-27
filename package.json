@@ -1,16 +1,21 @@
 {
   "name": "ffmpreg",
   "private": true,
+	"description": "Ffmpeg wrapper that will bloat your files even more.",
   "version": "0.1.0",
   "type": "module",
   "main": "dist-electron/electron/main.js",
+	"author": {
+		"name": "aerox0",
+		"url": "https://github.com/aerox0"
+	},
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --force",
     "dev:electron": "tsc -p tsconfig.electron.json && electron dist-electron/electron/main.js",
     "build": "tsc -b && vite build && tsc -p tsconfig.electron.json",
     "build:mac": "bun run build && electron-builder --mac",
     "build:linux": "bun run build && electron-builder --linux",
-    "build:win": "bun run build && electron-builder --win",
+    "build:win": "node scripts/ensure-ffmpeg.cjs --platform=win32 && bun run build && electron-builder --win",
     "build:all": "bun run build && electron-builder --mac --linux --win",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -27,7 +32,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@eslint/js": "^9.39.4",
-    "@rolldown/plugin-babel": "^0.2.1",
+    "@rolldown/plugin-babel": "^0.2.2",
     "@types/babel__core": "^7.20.5",
     "@types/ffprobe-static": "^2.0.3",
     "@types/node": "^24.12.0",
@@ -42,8 +47,8 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.57.0",
-    "vite": "^8.0.1",
+    "typescript-eslint": "^8.57.2",
+    "vite": "^8.0.3",
     "vitest": "^4.1.2"
   },
   "build": {
@@ -56,11 +61,11 @@
       "dist/**/*",
       "dist-electron/**/*"
     ],
-    "extraResources": [
-      {
-        "from": "node_modules/ffmpeg-static/{platform}",
-        "to": "ffmpeg"
-      }
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/ffmpeg",
+      "node_modules/ffmpeg-static/ffmpeg.exe",
+      "node_modules/ffmpeg-static/ffmpeg.LICENSE",
+      "node_modules/ffprobe-static/bin/**/ffprobe*"
     ],
     "mac": {
       "target": [
