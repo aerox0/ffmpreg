@@ -70,6 +70,11 @@ export function buildFfmpegArgs(item: QueueItem): string[] {
     args.push('-q:v', String(quality.crf));
   }
 
+  // Image output: tell ffmpeg to output a single frame (image2 muxer requires this)
+  if (format === 'jpeg' || format === 'png' || format === 'webp') {
+    args.push('-frames:v', '1');
+  }
+
   // Output path — last argument
   const outputExt = format;
   const baseName = source.fileName.replace(/\.[^.]+$/, '');
