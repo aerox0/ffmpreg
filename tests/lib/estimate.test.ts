@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { estimateOutputSize, estimateAudioSize, shouldWarnSize } from '../../src/lib/estimate.js';
+import { estimateOutputSize, estimateAudioSize, shouldWarnSize } from '../../src/lib/estimate';
 
 describe('estimateOutputSize', () => {
   it('estimates compact preset without trim', () => {

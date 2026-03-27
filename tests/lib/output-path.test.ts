@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolveOutputPath, getOutputDir } from '../../src/lib/output-path.js';
+import { resolveOutputPath, getOutputDir } from '../../src/lib/output-path';
 
 describe('resolveOutputPath', () => {
   it('resolves with no conflict', () => {

@@ -1,4 +1,20 @@
-import path from 'node:path';
+function dirname(filePath: string): string {
+  const sep = filePath.includes('/') ? '/' : '\\';
+  const idx = filePath.lastIndexOf(sep);
+  return idx === -1 ? '.' : filePath.slice(0, idx);
+}
+
+function basenameNoExt(filePath: string): string {
+  const sep = filePath.includes('/') ? '/' : '\\';
+  const fileName = filePath.slice(filePath.lastIndexOf(sep) + 1);
+  const dotIdx = fileName.lastIndexOf('.');
+  return dotIdx === -1 ? fileName : fileName.slice(0, dotIdx);
+}
+
+function joinPath(dir: string, fileName: string): string {
+  const sep = dir.includes('/') ? '/' : '\\';
+  return dir + sep + fileName;
+}
 
 export function resolveOutputPath(
   sourcePath: string,
@@ -6,24 +22,24 @@ export function resolveOutputPath(
   existingPaths: string[],
   outputDir?: string,
 ): string {
-  const dir = outputDir ?? path.dirname(sourcePath);
-  const basename = path.basename(sourcePath, path.extname(sourcePath));
+  const dir = outputDir ?? dirname(sourcePath);
+  const base = basenameNoExt(sourcePath);
   const ext = targetFormat.startsWith('.') ? targetFormat : '.' + targetFormat;
 
-  const candidate = (name: string): string => path.resolve(dir, name + ext);
+  const candidate = (name: string): string => joinPath(dir, name + ext);
 
-  let resolved = candidate(basename);
+  let resolved = candidate(base);
   if (!existingPaths.includes(resolved)) {
     return resolved;
   }
 
   let counter = 1;
-  while (existingPaths.includes(candidate(`${basename}-${counter}`))) {
+  while (existingPaths.includes(candidate(`${base}-${counter}`))) {
     counter++;
   }
-  return candidate(`${basename}-${counter}`);
+  return candidate(`${base}-${counter}`);
 }
 
 export function getOutputDir(sourcePath: string, customDir: string | null): string {
-  return customDir ?? path.dirname(sourcePath);
+  return customDir ?? dirname(sourcePath);
 }
