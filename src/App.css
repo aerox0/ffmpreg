@@ -899,6 +899,19 @@
   color: var(--success);
 }
 
+.stat-bar {
+  margin-top: 8px;
+  height: 4px;
+  background: var(--bg-4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
 .size-warning {
   grid-column: 1 / -1;
   background: var(--accent-dim);

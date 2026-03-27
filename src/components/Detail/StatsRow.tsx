@@ -27,15 +27,38 @@ export function StatsRow({ source, settings }: StatsRowProps) {
     ? Math.round((1 - estimatedSize / source.fileSize) * 100)
     : 0;
 
+  const barWidth = Math.min(100, source.fileSize > 0
+    ? (estimatedSize / source.fileSize) * 100
+    : 0);
+
+  const barColor = estimatedSize < source.fileSize
+    ? 'var(--success)'
+    : estimatedSize <= source.fileSize * 1.1
+      ? 'var(--accent)'
+      : 'var(--danger)';
+
   return (
     <div className="detail-section stats-row">
       <div className="stat-card">
         <div className="stat-label">Source</div>
         <div className="stat-value">{formatBytes(source.fileSize)}</div>
+        <div className="stat-bar">
+          <div className="stat-bar-fill" style={{ width: '100%', background: 'var(--border-light)' }} />
+        </div>
       </div>
       <div className="stat-card">
         <div className="stat-label">Estimated</div>
         <div className="stat-value">~{formatBytes(estimatedSize)}</div>
+        <div className="stat-bar">
+          <div
+            className="stat-bar-fill"
+            style={{
+              width: `${barWidth}%`,
+              background: barColor,
+              transition: 'width 0.4s var(--ease-out)',
+            }}
+          />
+        </div>
       </div>
       <div className="stat-card">
         <div className="stat-label">Savings</div>
