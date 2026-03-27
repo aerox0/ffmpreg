@@ -79,7 +79,9 @@ export function parseFfprobeFormat(
   let inputType: InputType = 'video';
   if (streams.every((s) => s.codec_type === 'audio')) {
     inputType = 'audio';
-  } else if (duration === 0 && streams.some((s) => s.codec_type === 'video')) {
+  } else if (duration < 0.5 && streams.some((s) => s.codec_type === 'video')) {
+    // Very short duration with a video stream indicates a still image (e.g., JPEG, PNG)
+    // rather than a video clip. ffprobe reports ~0.04s for single-frame images.
     inputType = 'image';
   }
 
