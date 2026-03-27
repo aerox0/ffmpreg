@@ -1,5 +1,6 @@
 import './App.css';
 import { QueuePanel } from './components/Queue/QueuePanel';
+import { DetailPanel } from './components/Detail/DetailPanel';
 import { useQueue } from './hooks/useQueue';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
     selectItem,
     rangeSelect,
     bulkApplySettings,
+    updateItemSettings,
   } = useQueue();
 
   return (
@@ -40,12 +42,13 @@ function App() {
         />
         <div className="detail-panel">
           {activeItem ? (
-            <div className="detail-placeholder">
-              <p>Select output format and quality for <strong>{activeItem.source.fileName}</strong></p>
-            </div>
+            <DetailPanel
+              item={activeItem}
+              onSettingsChange={(settings) => updateItemSettings(activeItem.id, settings)}
+            />
           ) : (
             <div className="detail-empty">
-              <p>Select a file from the queue to configure conversion settings</p>
+              Select a file from the queue to configure conversion settings
             </div>
           )}
         </div>
