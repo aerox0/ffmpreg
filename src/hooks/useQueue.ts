@@ -23,12 +23,22 @@ export function useQueue(): UseQueueReturn {
   const [items, setItems] = useState<QueueItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeId, setActiveId] = useState<string | null>(null);
-  const activeIdRef = useRef<string | null>(null);
 
-  // Keep ref in sync with state
+  // Refs to avoid stale closures in callbacks
+  const activeIdRef = useRef<string | null>(null);
+  const selectedIdsRef = useRef<Set<string>>(new Set());
+  const itemsRef = useRef<QueueItem[]>([]);
+
+  // Keep refs in sync with state
   useEffect(() => {
     activeIdRef.current = activeId;
   }, [activeId]);
+  useEffect(() => {
+    selectedIdsRef.current = selectedIds;
+  }, [selectedIds]);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
 
   // Subscribe to IPC events
   useEffect(() => {
@@ -99,10 +109,10 @@ export function useQueue(): UseQueueReturn {
       next.delete(id);
       return next;
     });
-    if (activeId === id) {
+    if (activeIdRef.current === id) {
       setActiveId(null);
     }
-  }, [api, activeId]);
+  }, [api]);
 
   const selectItem = useCallback((id: string, multi: boolean) => {
     if (multi) {
@@ -128,20 +138,17 @@ export function useQueue(): UseQueueReturn {
       return;
     }
 
-    setItems(prev => {
-      const ids = prev.map(item => item.id);
-      const startIdx = ids.indexOf(prevActive);
-      const endIdx = ids.indexOf(id);
+    const ids = itemsRef.current.map(item => item.id);
+    const startIdx = ids.indexOf(prevActive);
+    const endIdx = ids.indexOf(id);
 
-      if (startIdx === -1 || endIdx === -1) return prev;
+    if (startIdx === -1 || endIdx === -1) return;
 
-      const lo = Math.min(startIdx, endIdx);
-      const hi = Math.max(startIdx, endIdx);
-      const rangeIds = ids.slice(lo, hi + 1);
+    const lo = Math.min(startIdx, endIdx);
+    const hi = Math.max(startIdx, endIdx);
+    const rangeIds = ids.slice(lo, hi + 1);
 
-      setSelectedIds(new Set(rangeIds));
-      return prev;
-    });
+    setSelectedIds(new Set(rangeIds));
   }, [selectItem]);
 
   const startQueue = useCallback(async () => {
@@ -172,15 +179,17 @@ export function useQueue(): UseQueueReturn {
 
   const bulkApplySettings = useCallback(async (format: string, quality: QualitySettings) => {
     if (!api) return;
+    const currentSelected = selectedIdsRef.current;
     const promises: Promise<void>[] = [];
-    selectedIds.forEach(id => {
+    currentSelected.forEach(id => {
       promises.push(api.updateItemSettings(id, { format, quality }));
     });
     await Promise.all(promises);
 
-    // Update local state
+    // Update local state using the snapshot captured before IPC calls
+    const appliedIds = currentSelected;
     setItems(prev => prev.map(item => {
-      if (!selectedIds.has(item.id)) return item;
+      if (!appliedIds.has(item.id)) return item;
       return {
         ...item,
         settings: {
@@ -190,7 +199,7 @@ export function useQueue(): UseQueueReturn {
         },
       };
     }));
-  }, [api, selectedIds]);
+  }, [api]);
 
   return {
     items,
