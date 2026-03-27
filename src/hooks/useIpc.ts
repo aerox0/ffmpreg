@@ -15,6 +15,7 @@ declare global {
       onStatusChange: (callback: (id: string, status: string, error?: string) => void) => void;
       getSettings: () => Promise<unknown>;
       updateSettings: (settings: object) => Promise<void>;
+      showOpenDialog: (options: object) => Promise<string | null>;
     } | undefined;
   }
 }

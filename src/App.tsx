@@ -1,9 +1,14 @@
 import './App.css';
 import { QueuePanel } from './components/Queue/QueuePanel';
 import { DetailPanel } from './components/Detail/DetailPanel';
+import { SettingsModal } from './components/Settings/SettingsModal';
 import { useQueue } from './hooks/useQueue';
+import { useSettings } from './hooks/useSettings';
+import { useState } from 'react';
 
 function App() {
+  const [showSettings, setShowSettings] = useState(false);
+
   const {
     items,
     selectedIds,
@@ -20,10 +25,15 @@ function App() {
     updateItemSettings,
   } = useQueue();
 
+  const { settings, updateSettings, pickOutputDir } = useSettings();
+
   return (
     <div className="app">
       <div className="app-header">
         <div className="app-title">ffmpreg</div>
+        <button className="settings-btn" onClick={() => setShowSettings(true)}>
+          Settings
+        </button>
       </div>
       <div className="app-body">
         <QueuePanel
@@ -53,6 +63,15 @@ function App() {
           )}
         </div>
       </div>
+
+      {showSettings && (
+        <SettingsModal
+          settings={settings}
+          onClose={() => setShowSettings(false)}
+          onUpdate={updateSettings}
+          onPickDir={pickOutputDir}
+        />
+      )}
     </div>
   );
 }

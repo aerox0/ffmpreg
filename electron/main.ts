@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
@@ -378,6 +378,13 @@ function registerIpcHandlers() {
   ipcMain.handle('settings:update', async (_event, settings: Partial<AppSettings>): Promise<void> => {
     if (settings.outputDir !== undefined) store.set('outputDir', settings.outputDir);
     if (settings.overwriteBehavior !== undefined) store.set('overwriteBehavior', settings.overwriteBehavior);
+  });
+
+  // dialog:showOpenDialog
+  ipcMain.handle('dialog:showOpenDialog', async (_event, options: Electron.OpenDialogOptions): Promise<string | null> => {
+    const result = await dialog.showOpenDialog(mainWindow!, options);
+    if (result.canceled || result.filePaths.length === 0) return null;
+    return result.filePaths[0];
   });
 
   console.log('[main] IPC handlers registered');

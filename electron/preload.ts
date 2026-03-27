@@ -30,4 +30,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Settings
   getSettings: () => ipcRenderer.invoke('settings:get'),
   updateSettings: (settings: object) => ipcRenderer.invoke('settings:update', settings),
+
+  // Dialog
+  showOpenDialog: (options: object) => ipcRenderer.invoke('dialog:showOpenDialog', options),
 });
