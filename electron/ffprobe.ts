@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import type { SourceMeta, MediaStream, InputType } from '../src/types/index';
 import path from 'node:path';
 import ffmpegStatic from 'ffmpeg-static';
+import { existsSync } from 'node:fs';
 
 interface FfprobeStream {
   index: number;
@@ -111,9 +112,16 @@ export function probeFile(filePath: string): Promise<SourceMeta> {
     }
 
     // In packaged app, extraResources ffmpeg.exe is at process.resourcesPath
-    const ffprobePath = process.resourcesPath
+    let ffprobePath: string;
+    const resourcesFfprobe = process.resourcesPath
       ? path.join(process.resourcesPath, 'ffprobe.exe')
-      : ffmpegStatic.replace(/[\\/]ffmpeg$/, '') + (process.platform === 'win32' ? '\\ffprobe.exe' : '/ffprobe');
+      : null;
+    if (resourcesFfprobe && existsSync(resourcesFfprobe)) {
+      ffprobePath = resourcesFfprobe;
+    } else {
+      // Dev mode: use ffprobe from resources/ffmpeg directory
+      ffprobePath = path.join(process.cwd(), 'resources', 'ffmpeg', 'ffprobe.exe');
+    }
 
     const args = [
       '-v', 'quiet',
