@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import type { SourceMeta, MediaStream, InputType } from '../src/types/index';
 import path from 'node:path';
+import { app } from 'electron';
 import ffmpegStatic from 'ffmpeg-static';
 
 interface FfprobeStream {
@@ -109,7 +110,11 @@ export function probeFile(filePath: string): Promise<SourceMeta> {
       reject(new Error('ffmpeg-static binary not found'));
       return;
     }
-    const ffprobePath = ffmpegStatic.replace(/[\\/]ffmpeg$/, '') + (process.platform === 'win32' ? '\\ffprobe.exe' : '/ffprobe');
+
+    // In packaged app, extraResources ffmpeg.exe is at process.resourcesPath
+    const ffprobePath = app.isPackaged
+      ? path.join(process.resourcesPath!, 'ffprobe.exe')
+      : ffmpegStatic.replace(/[\\/]ffmpeg$/, '') + (process.platform === 'win32' ? '\\ffprobe.exe' : '/ffprobe');
 
     const args = [
       '-v', 'quiet',

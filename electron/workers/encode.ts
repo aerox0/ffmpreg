@@ -1,9 +1,9 @@
 import { parentPort, workerData } from 'node:worker_threads';
 import { spawn } from 'node:child_process';
 import { statSync } from 'node:fs';
-import ffmpegStatic from 'ffmpeg-static';
 
 interface EncodeJob {
+  ffmpegPath: string;
   args: string[];
   outputPath: string;
   isStreamCopy: boolean;
@@ -34,9 +34,9 @@ if (job.isStreamCopy) {
   sendMessage({ type: 'indeterminate' });
 }
 
-const ffmpegPath = ffmpegStatic;
+const ffmpegPath = job.ffmpegPath;
 if (!ffmpegPath) {
-  sendMessage({ type: 'error', message: 'ffmpeg-static binary not found' });
+  sendMessage({ type: 'error', message: 'ffmpeg path not provided' });
   process.exit(1);
 }
 

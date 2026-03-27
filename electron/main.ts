@@ -8,6 +8,7 @@ import { buildFfmpegArgs } from '../src/lib/ffmpeg-args.js';
 import { resolveOutputPath } from '../src/lib/output-path.js';
 import { getDefaultQuality } from '../src/lib/presets.js';
 import Store from 'electron-store';
+import ffmpegStatic from 'ffmpeg-static';
 
 type WorkerMessage =
   | { type: 'progress'; percent: number }
@@ -94,6 +95,15 @@ function makeId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+function getFfmpegPath(): string {
+  // In packaged app, use the bundled Windows binary from extraResources
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath!, 'ffmpeg.exe');
+  }
+  // In dev, use ffmpeg-static
+  return ffmpegStatic!;
+}
+
 // ─── Queue Processor ─────────────────────────────────────────────────────────
 
 async function processNextItem() {
@@ -139,7 +149,7 @@ async function processNextItem() {
     // Spawn worker
     const workerPath = path.join(__dirname, 'workers', 'encode.js');
     currentWorker = new Worker(workerPath, {
-      workerData: { args: ffmpegArgs, outputPath, isStreamCopy },
+      workerData: { ffmpegPath: getFfmpegPath(), args: ffmpegArgs, outputPath, isStreamCopy },
     });
 
     currentWorker.on('message', (msg: WorkerMessage) => {
@@ -331,7 +341,7 @@ function registerIpcHandlers() {
     // Quick audio downsample to PCM amplitude
     try {
       const { spawn } = await import('node:child_process');
-      const ffmpegPath = (await import('ffmpeg-static')).default;
+      const ffmpegPath = getFfmpegPath();
       if (!ffmpegPath) return [];
 
       return new Promise((resolve) => {
