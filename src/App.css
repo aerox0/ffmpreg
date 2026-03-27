@@ -182,7 +182,16 @@
   border-radius: 10px;
 }
 
-.status-analyzing { background: var(--bg-3); color: var(--text-muted); }
+.status-analyzing {
+  background: var(--bg-3);
+  color: var(--text-muted);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 .status-queued { background: var(--bg-3); color: var(--text-muted); }
 .status-converting { background: rgba(232, 162, 58, 0.2); color: var(--accent); }
 .status-done { background: rgba(76, 175, 80, 0.15); color: #4caf50; }
