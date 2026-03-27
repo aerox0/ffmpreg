@@ -1,6 +1,6 @@
 import type { QueueItem } from '../types/index';
-import { getCodecForContainer } from './codecs';
-import { getCrfRange, getGifPreset, getImageQualityRange } from './presets';
+import { getCodecForContainer } from './codecs.js';
+import { getCrfRange, getGifPreset, getImageQualityRange } from './presets.js';
 
 const COMPATIBLE_CONTAINERS: Record<string, Set<string>> = {
   h264: new Set(['mp4', 'mov', 'mkv', 'avi']),
