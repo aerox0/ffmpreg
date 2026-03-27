@@ -1,6 +1,10 @@
+import { useCallback } from 'react';
 import './App.css';
 import { useQueue } from './hooks/useQueue';
+import { useIpc } from './hooks/useIpc';
 import { QueuePanel } from './components/Queue/QueuePanel';
+import { DetailPanel } from './components/Detail/DetailPanel';
+import type { OutputSettings } from './types/index';
 
 function TitleBar() {
   return (
@@ -30,29 +34,28 @@ function TitleBar() {
   );
 }
 
-function DetailPlaceholder() {
-  return (
-    <div className="detail-panel">
-      <div className="detail-panel__placeholder">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.3">
-          <rect x="2" y="2" width="20" height="20" rx="2" ry="2" />
-          <line x1="9" y1="2" x2="9" y2="22" />
-        </svg>
-        <p>Select a file to view details</p>
-      </div>
-    </div>
-  );
-}
-
 function App() {
   const queue = useQueue();
+  const api = useIpc();
+
+  const activeItem = queue.activeId
+    ? queue.items.find((item) => item.id === queue.activeId) ?? null
+    : null;
+
+  const handleDetailSettingsChange = useCallback(
+    (id: string, settings: Partial<OutputSettings>) => {
+      if (!api) return;
+      api.updateItemSettings(id, settings as Record<string, unknown>);
+    },
+    [api],
+  );
 
   return (
     <div className="app">
       <TitleBar />
       <div className="app__body">
         <QueuePanel queue={queue} />
-        <DetailPlaceholder />
+        <DetailPanel item={activeItem} onSettingsChange={handleDetailSettingsChange} />
       </div>
     </div>
   );
