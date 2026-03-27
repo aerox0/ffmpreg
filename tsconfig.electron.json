@@ -7,10 +7,10 @@
     "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": false,
     "outDir": "dist-electron",
-    "rootDir": "electron",
+    "rootDir": ".",
     "module": "ES2022",
     "moduleResolution": "bundler",
     "esModuleInterop": true
   },
-  "include": ["electron"]
+  "include": ["electron", "src/types"]
 }
