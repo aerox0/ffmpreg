@@ -53,13 +53,34 @@ function App() {
     }
   }, []);
 
+  const total = items.filter(i => ['queued', 'converting', 'done'].includes(i.status)).length;
+  const done = items.filter(i => i.status === 'done').length;
+  const activeConverting = items.find(i => i.status === 'converting');
+  const progressPct = total > 0 ? (done / total) * 100 : 0;
+
   return (
     <div className="app">
       <div className="app-header">
         <div className="app-title">ffmpreg</div>
-        <button className="settings-btn" onClick={() => setShowSettings(true)}>
-          Settings
-        </button>
+        {total > 0 && (
+          <div className="header-progress">
+            <span className="header-progress-label">
+              {done} / {total}
+              {activeConverting && <span className="header-active-dot" />}
+            </span>
+            {activeConverting && (
+              <span className="header-active-name">
+                {activeConverting.source.fileName.slice(0, 40)}
+              </span>
+            )}
+          </div>
+        )}
+        <button className="settings-btn" onClick={() => setShowSettings(true)}>Settings</button>
+        {total > 0 && (
+          <div className="header-progress-bar">
+            <div className="header-progress-fill" style={{ width: `${progressPct}%` }} />
+          </div>
+        )}
       </div>
       <div className="app-body">
         <QueuePanel

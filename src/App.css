@@ -1276,6 +1276,59 @@
   border-color: var(--accent);
 }
 
+/* ─── Header Progress ─────────────────────────────────────────────────────── */
+
+.header-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+.header-progress-label {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-active-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.header-active-name {
+  font-size: 11px;
+  color: var(--text);
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--bg-4);
+}
+
+.header-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transition: width 0.4s var(--ease-out);
+  border-radius: 0 2px 2px 0;
+}
+
 /* ─── Header Settings Button ─────────────────────────────────────────────────── */
 
 .settings-btn {
