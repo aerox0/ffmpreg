@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { parseFfprobeOutput } from '../../electron/ffprobe';
-import type { SourceMeta } from '../../src/types/index';
 
 // ---------------------------------------------------------------------------
 // Mock ffprobe JSON fixtures
