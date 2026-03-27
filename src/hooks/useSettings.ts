@@ -35,10 +35,11 @@ export function useSettings() {
 
   const pickOutputDir = useCallback(async (): Promise<string | null> => {
     if (!hasElectronAPI()) return null;
-    return window.electronAPI!.showOpenDialog({
+    const paths = await window.electronAPI!.showOpenDialog({
       properties: ['openDirectory'],
       title: 'Select Output Directory',
     });
+    return paths?.[0] ?? null;
   }, []);
 
   return { settings, loading, updateSettings, pickOutputDir };

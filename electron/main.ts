@@ -394,10 +394,10 @@ function registerIpcHandlers() {
   });
 
   // dialog:showOpenDialog
-  ipcMain.handle('dialog:showOpenDialog', async (_event, options: Electron.OpenDialogOptions): Promise<string | null> => {
+  ipcMain.handle('dialog:showOpenDialog', async (_event, options: Electron.OpenDialogOptions): Promise<string[] | null> => {
     const result = await dialog.showOpenDialog(mainWindow!, options);
     if (result.canceled || result.filePaths.length === 0) return null;
-    return result.filePaths[0];
+    return result.filePaths;
   });
 
   console.log('[main] IPC handlers registered');

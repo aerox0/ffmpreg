@@ -1,12 +1,11 @@
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
+import { hasElectronAPI } from '../../hooks/useIpc';
 
 interface DropZoneProps {
   onFilesAdded: (paths: string[]) => void;
 }
 
 export function DropZone({ onFilesAdded }: DropZoneProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -23,19 +22,20 @@ export function DropZone({ onFilesAdded }: DropZoneProps) {
     e.stopPropagation();
   }, []);
 
-  const handleBrowse = useCallback(() => {
-    inputRef.current?.click();
-  }, []);
-
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files ?? []);
-      const paths = files.map((f) => (f as File & { path: string }).path).filter(Boolean);
-      if (paths.length > 0) onFilesAdded(paths);
-      e.target.value = '';
-    },
-    [onFilesAdded],
-  );
+  const handleBrowse = useCallback(async () => {
+    if (!hasElectronAPI()) return;
+    const paths = await window.electronAPI!.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [
+        { name: 'Media Files', extensions: ['mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'] },
+        { name: 'Video', extensions: ['mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm'] },
+        { name: 'Audio', extensions: ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'] },
+        { name: 'Image', extensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'] },
+        { name: 'All Files', extensions: ['*'] },
+      ],
+    });
+    if (paths && paths.length > 0) onFilesAdded(paths);
+  }, [onFilesAdded]);
 
   return (
     <div
@@ -47,14 +47,6 @@ export function DropZone({ onFilesAdded }: DropZoneProps) {
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && handleBrowse()}
     >
-      <input
-        ref={inputRef}
-        type="file"
-        multiple
-        accept="video/*,audio/*,image/*"
-        style={{ display: 'none' }}
-        onChange={handleInputChange}
-      />
       <div className="dropzone-inner">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
