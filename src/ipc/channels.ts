@@ -14,7 +14,7 @@ export const CHANNEL_ITEM_CANCEL = 'item:cancel' as const;
 export const CHANNEL_QUEUE_CANCEL_ALL = 'queue:cancelAll' as const;
 export const CHANNEL_ITEM_RETRY = 'item:retry' as const;
 
-// Progress & status (main → renderer events)
+// Progress & status (main → renderer events, used via webContents.send)
 export const CHANNEL_ENCODE_PROGRESS = 'encode:progress' as const;
 export const CHANNEL_ENCODE_STATUS = 'encode:status' as const;
 

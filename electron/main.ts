@@ -85,11 +85,11 @@ function createWindow(): void {
 // ---------------------------------------------------------------------------
 
 function sendProgress(id: string, percent: number): void {
-  mainWindow?.webContents.send('progress', id, percent);
+  mainWindow?.webContents.send('encode:progress', id, percent);
 }
 
 function sendStatusChange(id: string, status: string, detail?: unknown): void {
-  mainWindow?.webContents.send('status:change', id, status, detail);
+  mainWindow?.webContents.send('encode:status', id, status, detail);
 }
 
 // ---------------------------------------------------------------------------
@@ -320,6 +320,9 @@ ipcMain.handle('item:remove', async (_event, id: string): Promise<void> => {
     // Worker cleanup happens in the message handler
   }
 
+  // Clean up partial output if present
+  if (item.outputPath) deletePartialFile(item.outputPath);
+
   queue.delete(id);
 });
 
@@ -367,6 +370,7 @@ ipcMain.handle('item:cancel', async (_event, id: string): Promise<void> => {
     currentWorker.postMessage({ type: 'cancel' });
     // The worker will send back a 'cancelled' message which triggers cleanup
   } else {
+    if (item.outputPath) deletePartialFile(item.outputPath);
     item.status = 'cancelled';
     sendStatusChange(id, 'cancelled');
   }

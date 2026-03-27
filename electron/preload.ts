@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // File management
-  addFiles: () => ipcRenderer.invoke('files:add'),
+  addFiles: (paths: string[]) => ipcRenderer.invoke('files:add', paths),
   removeItem: (id: string) => ipcRenderer.invoke('item:remove', id),
   clearDone: () => ipcRenderer.invoke('queue:clearDone'),
 
@@ -20,8 +20,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onProgress: (callback: (id: string, progress: number) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, id: string, progress: number) =>
       callback(id, progress);
-    ipcRenderer.on('progress', handler);
-    return () => ipcRenderer.removeListener('progress', handler);
+    ipcRenderer.on('encode:progress', handler);
+    return () => ipcRenderer.removeListener('encode:progress', handler);
   },
   onStatusChange: (
     callback: (id: string, status: string, detail?: unknown) => void,
@@ -32,8 +32,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
       status: string,
       detail?: unknown,
     ) => callback(id, status, detail);
-    ipcRenderer.on('status:change', handler);
-    return () => ipcRenderer.removeListener('status:change', handler);
+    ipcRenderer.on('encode:status', handler);
+    return () => ipcRenderer.removeListener('encode:status', handler);
   },
 
   // Waveform
