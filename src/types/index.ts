@@ -26,6 +26,8 @@ export interface MediaStream {
   channels?: number;
   sampleRate?: number;
   title: string | null;
+  width?: number;
+  height?: number;
 }
 
 export type PresetName = 'compact' | 'good' | 'high' | 'custom';
