@@ -17,7 +17,7 @@ const PRESET_LABELS: Record<PresetName, string> = {
 };
 
 export function QualitySection({ item, onSettingsChange }: QualitySectionProps) {
-  const { settings, source } = item;
+  const { settings } = item;
   const format = settings.format;
   const quality = settings.quality;
   const preset = quality.preset;

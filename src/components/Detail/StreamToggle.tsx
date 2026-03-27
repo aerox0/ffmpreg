@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import type { QueueItem, OutputSettings, MediaStream } from '../../types/index';
-import { getCodecForContainer } from '../../lib/codecs';
 
 interface StreamToggleProps {
   item: QueueItem;
