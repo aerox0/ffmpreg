@@ -8,7 +8,9 @@ interface UseQueueState {
   activeItemId: string | null;
 }
 
-export function useQueue() {
+type StatusChangeCallback = (id: string, status: string, item: QueueItem | undefined, error?: string) => void;
+
+export function useQueue(onStatusChange?: StatusChangeCallback) {
   const [state, setState] = useState<UseQueueState>({
     items: [],
     selectedIds: new Set(),
@@ -29,9 +31,9 @@ export function useQueue() {
     });
 
     window.electronAPI!.onStatusChange((id, status, error) => {
-      setState((prev) => ({
-        ...prev,
-        items: prev.items.map((item) =>
+      let updatedItem: QueueItem | undefined;
+      setState((prev) => {
+        const newItems = prev.items.map((item) =>
           item.id === id
             ? {
                 ...item,
@@ -40,10 +42,15 @@ export function useQueue() {
                 progress: status === 'done' ? 100 : item.progress,
               }
             : item,
-        ),
-      }));
+        );
+        updatedItem = newItems.find((item) => item.id === id);
+        return { ...prev, items: newItems };
+      });
+      if (onStatusChange) {
+        onStatusChange(id, status, updatedItem, error);
+      }
     });
-  }, []);
+  }, [onStatusChange]);
 
   const addFiles = useCallback(async (paths: string[]) => {
     if (!hasElectronAPI()) return;

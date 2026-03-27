@@ -33,4 +33,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Dialog
   showOpenDialog: (options: object) => ipcRenderer.invoke('dialog:showOpenDialog', options),
+
+  // Shell
+  shellOpenFolder: (dirPath: string) => ipcRenderer.invoke('shell:open-folder', dirPath),
 });

@@ -400,6 +400,12 @@ function registerIpcHandlers() {
     return result.filePaths;
   });
 
+  // shell:open-folder
+  ipcMain.handle('shell:open-folder', async (_event, dirPath: string) => {
+    const { shell } = await import('electron');
+    if (dirPath) shell.openPath(dirPath);
+  });
+
   console.log('[main] IPC handlers registered');
 }
 

@@ -2,12 +2,29 @@ import './App.css';
 import { QueuePanel } from './components/Queue/QueuePanel';
 import { DetailPanel } from './components/Detail/DetailPanel';
 import { SettingsModal } from './components/Settings/SettingsModal';
+import { ToastContainer } from './components/Queue/ToastContainer';
 import { useQueue } from './hooks/useQueue';
 import { useSettings } from './hooks/useSettings';
-import { useState } from 'react';
+import { useToast } from './hooks/useToast';
+import { hasElectronAPI } from './hooks/useIpc';
+import { useState, useCallback } from 'react';
 
 function App() {
   const [showSettings, setShowSettings] = useState(false);
+
+  const { toasts, exiting, addToast, dismissToast } = useToast();
+
+  const handleStatusChange = useCallback((id: string, status: string, item: { source: { fileName: string; fileSize: number; inputType: 'video' | 'audio' | 'image' }; outputSize?: number } | undefined) => {
+    if ((status === 'done' || status === 'failed') && item) {
+      addToast({
+        fileName: item.source.fileName,
+        inputType: item.source.inputType,
+        status: status as 'done' | 'failed',
+        outputSize: item.outputSize ?? undefined,
+        sourceSize: item.source.fileSize,
+      });
+    }
+  }, [addToast]);
 
   const {
     items,
@@ -24,9 +41,17 @@ function App() {
     rangeSelect,
     bulkApplySettings,
     updateItemSettings,
-  } = useQueue();
+  } = useQueue(handleStatusChange);
 
   const { settings, updateSettings, pickOutputDir } = useSettings();
+
+  const handleOpenFolder = useCallback(async () => {
+    if (!hasElectronAPI()) return;
+    const settingsData = await window.electronAPI!.getSettings() as { outputDir: string | null };
+    if (settingsData.outputDir) {
+      window.electronAPI!.shellOpenFolder(settingsData.outputDir);
+    }
+  }, []);
 
   return (
     <div className="app">
@@ -79,6 +104,13 @@ function App() {
           onPickDir={pickOutputDir}
         />
       )}
+
+      <ToastContainer
+        toasts={toasts}
+        exiting={exiting}
+        onDismiss={dismissToast}
+        onOpenFolder={handleOpenFolder}
+      />
     </div>
   );
 }
