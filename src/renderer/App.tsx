@@ -78,8 +78,57 @@ export function App() {
     const result = await window.electronAPI.addFiles([filePath]);
     if (result.success && result.items && result.items.length > 0) {
       const item = result.items[0] as QueueItemData;
-      setCurrentItem(item);
-      setSelectedItemId(item.id);
+      const itemId = item.id;
+      setSelectedItemId(itemId);
+      
+      // Wait for the item's status to change from 'probing' to 'queued'
+      // before setting currentItem, so metadata is fully populated
+      const waitForQueued = (): Promise<QueueItemData | null> => {
+        return new Promise((resolve) => {
+          // Check current queue state
+          window.electronAPI.getQueueState().then((state: unknown) => {
+            const queueState = state as { items: QueueItemData[] };
+            const queuedItem = queueState.items?.find((i: QueueItemData) => i.id === itemId);
+            if (queuedItem && queuedItem.status === 'queued') {
+              resolve(queuedItem);
+              return;
+            }
+            if (queuedItem && (queuedItem.status === 'failed' || queuedItem.status === 'cancelled')) {
+              resolve(null);
+              return;
+            }
+            
+            // If still probing, wait for status change event
+            if (queuedItem && queuedItem.status === 'probing') {
+              const timeout = setTimeout(() => {
+                cleanup();
+                resolve(null);
+              }, 10000); // 10 second timeout
+              
+              const cleanup = window.electronAPI.onStatusChange((id, status) => {
+                if (id === itemId) {
+                  clearTimeout(timeout);
+                  cleanup();
+                  if (status === 'queued') {
+                    window.electronAPI.getQueueItem(itemId).then((updated: unknown) => {
+                      resolve(updated as QueueItemData | null);
+                    });
+                  } else {
+                    resolve(null);
+                  }
+                }
+              });
+            } else {
+              resolve(null);
+            }
+          });
+        });
+      };
+      
+      const fullyLoadedItem = await waitForQueued();
+      if (fullyLoadedItem) {
+        setCurrentItem(fullyLoadedItem);
+      }
       
       // Refresh queue
       const state = await window.electronAPI.getQueueState() as { items: QueueItemData[] };
