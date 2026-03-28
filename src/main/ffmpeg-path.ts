@@ -5,6 +5,11 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+
+// Derive __dirname for ESM compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const require = createRequire(import.meta.url);
 
