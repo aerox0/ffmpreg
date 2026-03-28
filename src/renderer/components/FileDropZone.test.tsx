@@ -349,11 +349,45 @@ describe('FileDropZone', () => {
   });
 
   describe('file input', () => {
-    it('renders hidden file input', () => {
+    it('opens showOpenDialog when clicked', async () => {
+      const mockShowOpenDialog = vi.fn().mockResolvedValue({
+        canceled: false,
+        filePaths: ['/path/to/test.mp4'],
+      });
+      (window as any).electronAPI = { showOpenDialog: mockShowOpenDialog };
+
       render(<FileDropZone {...defaultProps} />);
-      const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-      expect(input).toBeDefined();
-      expect(input.type).toBe('file');
+      const dropZone = screen.getByText('Drop files here or click to browse').parentElement!;
+      
+      fireEvent.click(dropZone);
+      
+      expect(mockShowOpenDialog).toHaveBeenCalled();
+    });
+
+    it('does not open dialog when file is already loaded', async () => {
+      const mockShowOpenDialog = vi.fn();
+      (window as any).electronAPI = { showOpenDialog: mockShowOpenDialog };
+
+      render(<FileDropZone {...defaultProps} />);
+      const dropZone = screen.getByText('Drop files here or click to browse').parentElement!;
+      
+      // Drop a file first
+      const mockFile = {
+        name: 'test.mp4',
+        path: '/path/to/test.mp4',
+      } as any;
+      
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [mockFile],
+        },
+      });
+      
+      // Try to click again
+      fireEvent.click(dropZone);
+      
+      // Dialog should not open since file is already loaded
+      expect(mockShowOpenDialog).not.toHaveBeenCalled();
     });
   });
 });
