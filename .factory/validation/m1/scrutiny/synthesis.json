@@ -1,39 +1,19 @@
 {
   "milestone": "m1",
-  "round": 1,
-  "status": "fail",
+  "round": 2,
+  "status": "pass",
   "validatorsRun": {
     "test": { "passed": true, "command": "npm run test", "exitCode": 0 },
     "typecheck": { "passed": true, "command": "npm run typecheck", "exitCode": 0 },
     "lint": { "passed": true, "command": "npm run lint", "exitCode": 0 }
   },
   "reviewsSummary": {
-    "total": 16,
-    "passed": 13,
-    "failed": 3,
-    "failedFeatures": [
-      "electron-preload-context-bridge",
-      "fix-esm-cjs-mismatch",
-      "error-handling-component"
-    ]
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "failedFeatures": []
   },
-  "blockingIssues": [
-    {
-      "featureId": "electron-preload-context-bridge",
-      "severity": "blocking",
-      "description": "Missing 'getWaveform' method. Feature description and AGENTS.md both require exposing getWaveform(id: string): Promise<number[]>, but implementation provides 'probeFile' instead. The preload exposes all other methods but getWaveform is absent."
-    },
-    {
-      "featureId": "fix-esm-cjs-mismatch",
-      "severity": "blocking",
-      "description": "ffmpeg-path.ts (line 21) and ffprobe.ts (line 25) use __dirname without derivation from import.meta.url. In ESM, __dirname is undefined. While main.ts and queue.ts correctly derive __dirname via fileURLToPath, the two files specifically mentioned in the feature description were not fully fixed. This will cause runtime failures in packaged apps when the fallback path is executed."
-    },
-    {
-      "featureId": "error-handling-component",
-      "severity": "blocking",
-      "description": "ErrorDisplay component and error classification utilities (classifyError, getErrorTitle, getErrorMessage) were created but NOT integrated into the application. The component exists at src/renderer/components/ErrorDisplay.tsx but is never imported or used by App.tsx, EncodeProgress.tsx, or CompletionDisplay.tsx. These components still use their own inline error displays with hardcoded 'Encoding Failed' messages instead of using ErrorDisplay with classification."
-    }
-  ],
+  "blockingIssues": [],
   "appliedUpdates": [],
   "suggestedGuidanceUpdates": [
     {
@@ -62,5 +42,5 @@
     }
   ],
   "rejectedObservations": [],
-  "previousRound": null
+  "previousRound": ".factory/validation/m1/scrutiny/synthesis.json"
 }
