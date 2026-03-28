@@ -1,67 +1,72 @@
 {
   "milestone": "m1",
-  "round": 1,
+  "round": 2,
   "status": "fail",
   "assertionsSummary": {
     "total": 26,
-    "passed": 0,
-    "failed": 0,
-    "blocked": 26
+    "passed": 10,
+    "failed": 12,
+    "blocked": 4
   },
-  "passedAssertions": [],
-  "failedAssertions": [],
+  "passedAssertions": [
+    "VAL-FILE-001",
+    "VAL-FILE-006",
+    "VAL-FILE-007",
+    "VAL-FILE-008",
+    "VAL-ENCODE-001",
+    "VAL-ENCODE-003",
+    "VAL-ENCODE-005",
+    "VAL-ENCODE-006",
+    "VAL-ENCODE-007",
+    "VAL-ENCODE-008"
+  ],
+  "failedAssertions": [
+    { "id": "VAL-FILE-002", "reason": "React UI does not re-render when queue state changes via electronAPI.addFiles() - backend processes audio file correctly but UI stays empty" },
+    { "id": "VAL-FILE-003", "reason": "React UI does not re-render when queue state changes via electronAPI.addFiles() - backend processes image file correctly but UI stays empty" },
+    { "id": "VAL-FILE-005", "reason": "React UI does not re-render when queue state changes via electronAPI.addFiles() - cannot verify error display" },
+    { "id": "VAL-QUAL-001", "reason": "App crashes with 'Cannot read properties of undefined (reading split)' when file added via browser upload - File.path is undefined" },
+    { "id": "VAL-QUAL-002", "reason": "App crashes with 'Cannot read properties of undefined (reading split)' when file added via browser upload - File.path is undefined" },
+    { "id": "VAL-QUAL-003", "reason": "App crashes with 'Cannot read properties of undefined (reading split)' when file added via browser upload - File.path is undefined" },
+    { "id": "VAL-QUAL-004", "reason": "App crashes with 'Cannot read properties of undefined (reading split)' when file added via browser upload - File.path is undefined" },
+    { "id": "VAL-QUAL-005", "reason": "App crashes with 'Cannot read properties of undefined (reading split)' when file added via browser upload - File.path is undefined" },
+    { "id": "VAL-QUAL-006", "reason": "App crashes with 'Cannot read properties of undefined (reading split)' when file added via browser upload - File.path is undefined" },
+    { "id": "VAL-ERR-001", "reason": "React UI does not re-render when queue state changes - cannot test error handling" },
+    { "id": "VAL-ERR-002", "reason": "React UI does not re-render when queue state changes - cannot test encoding error cleanup" },
+    { "id": "VAL-CROSS-001", "reason": "React UI does not re-render when queue state changes - cannot test end-to-end flow" },
+    { "id": "VAL-CROSS-002", "reason": "React UI does not re-render when queue state changes - cannot test preset bound enforcement" },
+    { "id": "VAL-CROSS-003", "reason": "React UI does not re-render when queue state changes - cannot test output path resolution" }
+  ],
   "blockedAssertions": [
-    { "id": "VAL-FILE-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-FILE-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-FILE-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-FILE-004", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-FILE-005", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-FILE-006", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-FILE-007", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-FILE-008", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-QUAL-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-QUAL-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-QUAL-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-QUAL-004", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-QUAL-005", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-QUAL-006", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-004", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-005", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-006", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-007", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ENCODE-008", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ERR-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-ERR-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-CROSS-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-CROSS-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
-    { "id": "VAL-CROSS-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" }
+    { "id": "VAL-FILE-004", "blockedBy": "Cannot automate native OS file picker dialogs through agent-browser - tool limitation" },
+    { "id": "VAL-ENCODE-002", "blockedBy": "Test media file (32KB) encodes in under 1 second - cannot observe progress bar updates" },
+    { "id": "VAL-ENCODE-004", "blockedBy": "Test media file (32KB) encodes too fast to test cancel functionality - need larger test file" }
   ],
   "appliedUpdates": [
     {
-      "target": "package.json",
-      "description": "Fixed dev:electron script path from dist-electron/electron/main.js to dist-electron/main/main.js",
+      "target": "user-testing.md",
+      "description": "Preload ESM fix verified working - window.electronAPI is now properly exposed",
       "source": "setup"
     },
     {
       "target": "user-testing.md",
-      "description": "Added critical issue documentation about preload script ES module bug",
-      "source": "setup"
+      "description": "Added note about React UI synchronization issue as critical blocker for user testing",
+      "source": "flow-report"
+    },
+    {
+      "target": "user-testing.md",
+      "description": "Added note about File.path undefined issue with browser-based file upload",
+      "source": "flow-report"
     }
   ],
-  "previousRound": null,
+  "previousRound": ".factory/validation/m1/user-testing/synthesis.json",
   "rootCause": {
-    "description": "The Electron preload script (src/main/preload.ts) fails to expose window.electronAPI due to ES module/CommonJS incompatibility",
+    "description": "Two distinct blocking issues prevent full validation: (1) React UI does not re-render when queue state changes via electronAPI - backend processes files correctly but UI stays stale, (2) App crashes when files are added via browser-based upload because File.path is undefined in CDP context",
     "details": [
-      "TypeScript compiler outputs ES module syntax with 'export {};'",
-      "The preload code uses 'require(electron)' which is CommonJS",
-      "In ES module context, require is not available as a global",
-      "The preload script fails silently and electronAPI is never exposed",
-      "React components call window.electronAPI methods and crash during mount",
-      "The React app fails to render - #root div remains empty"
+      "React state management bug: electronAPI.addFiles() succeeds at IPC level but React components don't re-render",
+      "The onStatusChange event listener in React appears to not receive/sync IPC events properly",
+      "Browser-based file upload (used by agent-browser) doesn't provide File.path property which Electron apps expect",
+      "Test media files too small (32KB) for timing-dependent assertions"
     ],
-    "suggestedFix": "Fix preload.ts to use proper ES module imports or configure the build to output CommonJS for the preload script. Options: 1) Use dynamic import() instead of require, 2) Configure TypeScript to output CommonJS for preload, 3) Use a bundler like esbuild to create a bundled preload script"
+    "suggestedFix": "Fix 1: Investigate React state management - likely need to ensure queue state changes trigger re-renders. Fix 2: Use native Electron file dialog (showOpenDialog) instead of browser-based file input. Fix 3: Create larger test media files for timing tests."
   }
 }

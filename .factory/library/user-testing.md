@@ -62,13 +62,17 @@ NODE_ENV=development electron --remote-debugging-port=9222 dist-electron/main/ma
 
 Connect via: `agent-browser connect 9222`
 
-**Critical Issue (m1 validation):** The preload script (`src/main/preload.ts`) has a critical bug where it fails to expose `window.electronAPI` due to ES module/CommonJS incompatibility. The preload uses `import { contextBridge, ipcRenderer } from 'electron'` which fails in the preload context. This causes React to not render because components call `window.electronAPI` methods.
+**Status Update (Round 2):** The preload ESM issue has been FIXED - `window.electronAPI` is now properly exposed and React app renders correctly.
+
+**Critical Issue (REMAINING BLOCKER):** React UI does not re-render when queue state changes via `electronAPI.addFiles()`. The backend processes files correctly (metadata extracted, queue updated), but React components don't receive or respond to queue state changes. The sidebar remains in empty state even after files are successfully added.
 
 **Debugging findings:**
-- `window.electronAPI` is undefined in the renderer
-- React fails to mount (root div is empty)
-- The preload script needs to be fixed to use `require('electron')` or proper ES module handling
-- The TypeScript compilation outputs `export {};` making it a module, but uses `require()` internally which doesn't work in ES modules
+- `window.electronAPI` is now defined as an object
+- React renders correctly (shows drop zone, sidebar, main panel)
+- `electronAPI.addFiles()` returns success with correct metadata
+- `getQueueState()` shows items in queue with status=done
+- But React UI shows "Select a file to see details" instead of the queued file
+- This is a React state synchronization issue with the IPC event system
 
 ## Flow Validator Guidance: quality-presets
 
@@ -80,17 +84,38 @@ Same isolation and connection requirements as file-drop-zone.
 
 ## Known Issues
 
-### Preload Script ES Module Issue (BLOCKER for m1)
+### React UI State Synchronization Issue (CRITICAL BLOCKER for m1)
 
-The preload script at `src/main/preload.ts` fails to expose `electronAPI` due to module system incompatibility:
-- TypeScript compiles to ES modules with `export {};`
-- But code uses `require('electron')` which is CommonJS
-- In ES module context, `require` is not available
-- Fix: Change preload to use proper ES module imports or use a bundler for the preload
+The React app does not re-render when queue state changes via `electronAPI`:
+- `electronAPI.addFiles()` succeeds at IPC level but React doesn't re-render
+- `getQueueState()` returns correct data but UI shows stale/empty state
+- The `onStatusChange` event listener appears to not sync IPC events properly
+- This blocks ALL UI-based assertions that require file to be visible after drop
 
-### Dev Electron Script Path Issue
+**Root Cause:** React state management issue - queue state changes are not triggering re-renders in React components.
 
-The `dev:electron` script in package.json was pointing to wrong directory:
-- Was: `electron dist-electron/electron/main.js`
-- Should be: `electron dist-electron/main/main.js`
-- Fixed by updating package.json
+### Browser-Based File Upload File.path Issue
+
+When using browser-based file upload (via CDP), the `File.path` property is undefined:
+- Electron apps expect `File.path` to contain the native file path
+- Browser-based file upload doesn't populate this property
+- App crashes with "Cannot read properties of undefined (reading 'split')"
+- This blocks quality preset assertions (VAL-QUAL-001 through VAL-QUAL-006)
+
+**Workaround:** Use native Electron `showOpenDialog` API instead of browser file input for testing.
+
+### Test Media File Size Issue
+
+The test video file (`test_video.mp4` at 32KB) is too small for timing-dependent tests:
+- Encoding completes in under 1 second
+- Cannot observe progress bar updates (VAL-ENCODE-002)
+- Cannot test cancel functionality (VAL-ENCODE-004)
+
+**Fix:** Create larger test media files (at least 10MB) for timing tests.
+
+### Preload Script ES Module Issue (FIXED)
+
+The preload script ESM issue has been fixed in commit 363b3d9:
+- Separate tsconfig for preload outputs CommonJS
+- `window.electronAPI` is now properly exposed
+- React app renders correctly

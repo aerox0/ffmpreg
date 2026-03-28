@@ -1,0 +1,110 @@
+{
+  "groupId": "error-cross",
+  "testedAt": "2026-03-28T15:30:00.000Z",
+  "isolation": {
+    "appUrl": "http://localhost:5173",
+    "cdpPort": 9222,
+    "session": "7dcc564dcabc4",
+    "testMediaDir": "/tmp/ffmpreg-test-media/"
+  },
+  "toolsUsed": ["agent-browser"],
+  "assertions": [
+    {
+      "id": "VAL-ERR-001",
+      "title": "Corrupt or Unreadable File Marked as Failed",
+      "status": "blocked",
+      "steps": [
+        { "action": "Attempted to load unsupported file (test_unsupported.txt)", "expected": "File rejected with error message", "observed": "Could not trigger file drop/selection in headless mode - system file dialog not accessible" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/error-cross/empty-queue-app-state.png"],
+        "consoleErrors": "None at app level when queue is empty",
+        "network": "N/A - local app"
+      },
+      "issues": "BLOCKED: The React app's UI does not update when files are added via electronAPI.addFiles(). The queue state (verified via getQueueState) shows items being added, but the React UI remains stuck on 'Select a file to see details'. This prevents testing any file-related assertions."
+    },
+    {
+      "id": "VAL-ERR-002",
+      "title": "Encoding Error Cleans Up Partial Output",
+      "status": "blocked",
+      "steps": [
+        { "action": "Attempted to trigger encoding error", "expected": "Encoding fails, partial output cleaned up", "observed": "Cannot initiate encoding because UI doesn't respond to file addition" }
+      ],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "N/A",
+        "network": "N/A"
+      },
+      "issues": "BLOCKED: Same issue as VAL-ERR-001 - cannot get app into a state where encoding can be initiated."
+    },
+    {
+      "id": "VAL-CROSS-001",
+      "title": "Format Selection to Encode End-to-End",
+      "status": "blocked",
+      "steps": [
+        { "action": "Attempted to add video file to queue via electronAPI.addFiles", "expected": "File appears in queue, UI updates to show file details", "observed": "electronAPI.addFiles returns success with item data, but React UI shows empty state" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/error-cross/empty-queue-app-state.png", "m1/error-cross/VAL-CROSS-001-empty-state.png"],
+        "consoleErrors": "None after queue cleared",
+        "network": "N/A"
+      },
+      "issues": "BLOCKED: The electronAPI.addFiles() call succeeds (returns item with metadata), but the React app does not re-render to display the queued item. Verified via getQueueState() that item exists in queue, but UI shows placeholder text."
+    },
+    {
+      "id": "VAL-CROSS-002",
+      "title": "Preset Bound Enforcement Through Full Encode",
+      "status": "blocked",
+      "steps": [
+        { "action": "Cannot test - requires UI to be functional", "expected": "CRF slider bounded by preset range", "observed": "App UI stuck in empty state" }
+      ],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "N/A",
+        "network": "N/A"
+      },
+      "issues": "BLOCKED: Same root cause - React app not updating when queue state changes via electronAPI."
+    },
+    {
+      "id": "VAL-CROSS-003",
+      "title": "Output Path Resolution Before Encoding",
+      "status": "blocked",
+      "steps": [
+        { "action": "Cannot test - requires UI to be functional", "expected": "Output path conflict resolved with -1 suffix", "observed": "App UI stuck in empty state" }
+      ],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "N/A",
+        "network": "N/A"
+      },
+      "issues": "BLOCKED: Same root cause - React app not updating when queue state changes via electronAPI."
+    }
+  ],
+  "frictions": [
+    {
+      "description": "React app does not re-render when electronAPI.addFiles() is called programmatically",
+      "resolved": false,
+      "resolution": "Tried calling addFiles via eval, tried triggering file input change event, tried opening dialog via showOpenDialog - none caused UI update. App appears to only respond to user-initiated file selection events.",
+      "affectedAssertions": ["VAL-ERR-001", "VAL-ERR-002", "VAL-CROSS-001", "VAL-CROSS-002", "VAL-CROSS-003"]
+    },
+    {
+      "description": "Earlier testing left corrupted queue state with failed items that caused React error boundary to trigger",
+      "resolved": true,
+      "resolution": "Cleared queue via removeItem calls - queue is now clean but issue persists",
+      "affectedAssertions": ["all"]
+    }
+  ],
+  "blockers": [
+    {
+      "description": "React App state management bug: The React app does not re-render when queue state changes via electronAPI. When electronAPI.addFiles() is called (either programmatically or through UI), the queue state IS updated in the main process, but the React UI remains stuck showing 'Select a file to see details'. This is a fundamental issue that prevents testing ALL UI-based assertions.",
+      "affectedAssertions": ["VAL-ERR-001", "VAL-ERR-002", "VAL-CROSS-001", "VAL-CROSS-002", "VAL-CROSS-003"],
+      "quickFixAttempted": "1. Cleared queue state (removed failed/old items) - didn't help\n2. Reloaded page multiple times - UI still shows empty state\n3. Verified via getQueueState() that electronAPI works correctly - queue updates properly\n4. Tried triggering file input change event with fake File object - queue updated but UI didn't re-render"
+    },
+    {
+      "description": "Cannot interact with system file dialog in headless browser mode - showOpenDialog API call opens dialog but it's not accessible via CDP",
+      "affectedAssertions": ["VAL-ERR-001"],
+      "quickFixAttempted": "Tried showOpenDialog - returns {canceled: true, filePaths: []} because dialog cannot be interacted with in headless mode"
+    }
+  ],
+  "summary": "Tested 5 assertions (VAL-ERR-001, VAL-ERR-002, VAL-CROSS-001, VAL-CROSS-002, VAL-CROSS-003): ALL BLOCKED due to React app state management bug. The electronAPI (addFiles, getQueueState, etc.) works correctly at the IPC level, but the React UI does not re-render when queue state changes. Verified via getQueueState() that files ARE being added to the queue, but the React app remains stuck showing 'Select a file to see details'. Root cause appears to be that the React app's onStatusChange event listener is not properly receiving/syncing IPC events when called programmatically. This is a blocking issue that requires code fix in the app."
+}

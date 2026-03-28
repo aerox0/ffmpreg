@@ -1,0 +1,144 @@
+{
+  "groupId": "file-drop",
+  "testedAt": "2026-03-28T14:30:00.000Z",
+  "isolation": {
+    "appUrl": "http://localhost:5173",
+    "cdpPort": 9222,
+    "session": "7dcc564dcabc",
+    "testMediaDir": "/tmp/ffmpreg-test-media/"
+  },
+  "toolsUsed": ["agent-browser"],
+  "assertions": [
+    {
+      "id": "VAL-FILE-001",
+      "title": "Drag and Drop Video File Accepted",
+      "status": "pass",
+      "steps": [
+        { "action": "Call electronAPI.addFiles with test_video.mp4", "expected": "File added, metadata extracted, UI shows format pills", "observed": "Backend correctly added file with metadata: duration=2s, 320x240, h264/aac, inputType=video" },
+        { "action": "Inspect HTML after API call", "expected": "Format pills visible with video formats", "observed": "Format pills show MP4, MOV, MKV, WEBM, AVI, GIF, MP3, AAC, WAV, FLAC, OGG - all video-compatible formats" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/file-drop/VAL-FILE-001-video-loaded.png"],
+        "consoleErrors": "none",
+        "apiResponse": "addFiles returned success with full metadata"
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-FILE-002",
+      "title": "Drag and Drop Audio File Adapts Format List",
+      "status": "blocked",
+      "steps": [
+        { "action": "Call electronAPI.addFiles with test_audio.mp3", "expected": "Backend detects inputType=audio, UI updates to show only audio formats", "observed": "Backend correctly detected inputType=audio, but UI sidebar remained in empty state" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/file-drop/VAL-FILE-002-audio-state.png"],
+        "consoleErrors": "none",
+        "apiResponse": "Backend: inputType=audio, audioCodec=mp3, duration=2.04s - correct. But UI did not update."
+      },
+      "issues": "React UI does not re-render when files are added via electronAPI.addFiles(). Queue state shows file with status=done, but sidebar stays empty."
+    },
+    {
+      "id": "VAL-FILE-003",
+      "title": "Drag and Drop Image File Adapts Format List",
+      "status": "blocked",
+      "steps": [
+        { "action": "Call electronAPI.addFiles with test_image.png", "expected": "Backend detects inputType=image, UI updates to show only image formats", "observed": "Backend correctly processed file (status=done), but UI did not update to show image formats" }
+      ],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "none",
+        "apiResponse": "Backend processed image file but UI did not reflect the change"
+      },
+      "issues": "Same as VAL-FILE-002 - React UI synchronization issue"
+    },
+    {
+      "id": "VAL-FILE-004",
+      "title": "Browse Button Opens File Picker",
+      "status": "blocked",
+      "steps": [
+        { "action": "Click on drop zone text", "expected": "Native OS file picker opens", "observed": "agent-browser cannot control native OS dialogs - file picker opened but automation cannot interact with it" }
+      ],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "none",
+        "network": "N/A"
+      },
+      "issues": "Cannot automate native OS file picker dialogs through agent-browser. The click action triggered the file picker but the tool cannot select files in the native dialog."
+    },
+    {
+      "id": "VAL-FILE-005",
+      "title": "Unsupported File Format Shows Error",
+      "status": "blocked",
+      "steps": [
+        { "action": "Call electronAPI.addFiles with test_unsupported.txt", "expected": "Backend rejects file, UI shows error message, drop zone returns to empty state", "observed": "Cannot verify - UI synchronization issue prevents verification" }
+      ],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "none"
+      },
+      "issues": "Cannot test properly due to UI synchronization issue. Need working UI to verify error display."
+    },
+    {
+      "id": "VAL-FILE-006",
+      "title": "Format Pill Selection Is Single-Select",
+      "status": "pass",
+      "steps": [
+        { "action": "Click on MOV format pill after MP4 is selected", "expected": "MOV becomes selected, MP4 becomes deselected", "observed": "After clicking MOV via JavaScript, MOV became pressed and MP4 became unpressed" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/file-drop/VAL-FILE-001-video-loaded.png"],
+        "consoleErrors": "none"
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-FILE-007",
+      "title": "Quality Presets Shown After Format Selection",
+      "status": "pass",
+      "steps": [
+        { "action": "Inspect HTML after video file loaded", "expected": "Quality preset section visible with Compact, Good, High, Custom options", "observed": "Preset section visible with all 4 options, each showing CRF range and description" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/file-drop/VAL-FILE-001-video-loaded.png"],
+        "consoleErrors": "none"
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-FILE-008",
+      "title": "File Remove Resets UI",
+      "status": "pass",
+      "steps": [
+        { "action": "Click remove button (✕)", "expected": "Drop zone returns to empty state, format selector cleared, quality presets hidden", "observed": "UI immediately returned to empty drop zone state showing 'Drop files here or click to browse'" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/file-drop/VAL-FILE-000-empty-state.png"],
+        "consoleErrors": "none"
+      },
+      "issues": null
+    }
+  ],
+  "frictions": [
+    {
+      "description": "agent-browser click command times out on format pill buttons even though elements are visible and enabled - had to use JavaScript click via eval as workaround",
+      "resolved": true,
+      "resolution": "Used agent-browser eval to call click() directly on DOM element",
+      "affectedAssertions": ["VAL-FILE-006"]
+    },
+    {
+      "description": "Native OS file picker dialogs cannot be automated by agent-browser - click triggers dialog but tool cannot interact with it",
+      "resolved": false,
+      "resolution": "N/A - tool limitation",
+      "affectedAssertions": ["VAL-FILE-004"]
+    }
+  ],
+  "blockers": [
+    {
+      "description": "React UI does not re-render when queue state changes. Files added via electronAPI.addFiles() are processed correctly by backend (status=done, metadata extracted), but the React app does not update to reflect these changes. The sidebar remains in empty state and main panel shows stale data.",
+      "affectedAssertions": ["VAL-FILE-002", "VAL-FILE-003", "VAL-FILE-005"],
+      "quickFixAttempted": "Called addFiles via API, verified queue state updated correctly (inputType=audio for mp3, status=done), but HTML inspection showed sidebar remained empty. Tried reload - did not fix. Issue persists."
+    }
+  ],
+  "summary": "Tested 8 assertions: 4 passed (VAL-FILE-001, VAL-FILE-006, VAL-FILE-007, VAL-FILE-008), 4 blocked. Primary blocker: React UI not synchronizing with backend queue state - electronAPI works correctly at backend level but React components don't re-render on queue changes. This affects all assertions requiring UI verification after file drop. VAL-FILE-004 blocked by tool limitation (cannot automate native OS dialogs)."
+}

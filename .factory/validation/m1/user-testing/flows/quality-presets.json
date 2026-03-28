@@ -1,11 +1,12 @@
 {
   "groupId": "quality-presets",
-  "testedAt": "2026-03-28T13:41:00.000Z",
+  "testedAt": "2026-03-28T14:30:00.000Z",
   "isolation": {
+    "appUrl": "http://localhost:5173",
     "cdpPort": 9222,
-    "electronAppConnected": true,
-    "testMediaLocation": "/tmp/ffmpreg-test-media/",
-    "testVideoFile": "test_video.mp4"
+    "session": "7dcc564dcabc2",
+    "testMediaDir": "/tmp/ffmpreg-test-media",
+    "testMediaFiles": ["test_video.mp4", "test_audio.mp3", "test_image.png", "test_unsupported.txt"]
   },
   "toolsUsed": ["agent-browser"],
   "assertions": [
@@ -13,16 +14,11 @@
       "id": "VAL-QUAL-001",
       "title": "Preset Selection Updates CRF Slider Bounds",
       "status": "blocked",
-      "steps": [
-        { "action": "Connect to Electron app via CDP port 9222", "expected": "App UI accessible", "observed": "Connected but app not rendering" },
-        { "action": "Navigate to app URL", "expected": "App loads and displays drop zone", "observed": "Page loads but React components not mounting" }
-      ],
+      "steps": [],
       "evidence": {
-        "screenshots": ["quality-presets/app-not-rendering.png"],
-        "consoleErrors": "Cannot read properties of undefined (reading 'isMaximized'), Cannot read properties of undefined (reading 'onProgress')",
-        "network": "http://localhost:5173/ returns 200"
+        "screenshots": ["m1/quality-presets/initial-state.png", "m1/quality-presets/page-loading.png", "m1/quality-presets/after-upload.png"]
       },
-      "issues": "Electron app is not rendering React components. The app shows title 'ffmpreg' and page loads (http://localhost:5173 returns 200), but the #root element has 0 children. Console errors: 'Cannot read properties of undefined (reading 'isMaximized')' and 'Cannot read properties of undefined (reading 'onProgress')' are preventing React from mounting. This blocks all quality preset testing."
+      "issues": "App crashes with 'Cannot read properties of undefined (reading split)' when file is added via browser upload. The File.path property is not available when using CDP-based file upload, causing ffprobe to receive an undefined file path."
     },
     {
       "id": "VAL-QUAL-002",
@@ -30,11 +26,9 @@
       "status": "blocked",
       "steps": [],
       "evidence": {
-        "screenshots": [],
-        "consoleErrors": "Same as VAL-QUAL-001",
-        "network": "N/A"
+        "screenshots": ["m1/quality-presets/initial-state.png", "m1/quality-presets/page-loading.png", "m1/quality-presets/after-upload.png"]
       },
-      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+      "issues": "Cannot test - app crashes when file is added (same root cause as VAL-QUAL-001)"
     },
     {
       "id": "VAL-QUAL-003",
@@ -42,11 +36,9 @@
       "status": "blocked",
       "steps": [],
       "evidence": {
-        "screenshots": [],
-        "consoleErrors": "Same as VAL-QUAL-001",
-        "network": "N/A"
+        "screenshots": ["m1/quality-presets/initial-state.png", "m1/quality-presets/page-loading.png", "m1/quality-presets/after-upload.png"]
       },
-      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+      "issues": "Cannot test - app crashes when file is added (same root cause as VAL-QUAL-001)"
     },
     {
       "id": "VAL-QUAL-004",
@@ -54,11 +46,9 @@
       "status": "blocked",
       "steps": [],
       "evidence": {
-        "screenshots": [],
-        "consoleErrors": "Same as VAL-QUAL-001",
-        "network": "N/A"
+        "screenshots": ["m1/quality-presets/initial-state.png", "m1/quality-presets/page-loading.png", "m1/quality-presets/after-upload.png"]
       },
-      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+      "issues": "Cannot test - app crashes when file is added (same root cause as VAL-QUAL-001)"
     },
     {
       "id": "VAL-QUAL-005",
@@ -66,11 +56,9 @@
       "status": "blocked",
       "steps": [],
       "evidence": {
-        "screenshots": [],
-        "consoleErrors": "Same as VAL-QUAL-001",
-        "network": "N/A"
+        "screenshots": ["m1/quality-presets/initial-state.png", "m1/quality-presets/page-loading.png", "m1/quality-presets/after-upload.png"]
       },
-      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+      "issues": "Cannot test - app crashes when file is added (same root cause as VAL-QUAL-001)"
     },
     {
       "id": "VAL-QUAL-006",
@@ -78,27 +66,25 @@
       "status": "blocked",
       "steps": [],
       "evidence": {
-        "screenshots": [],
-        "consoleErrors": "Same as VAL-QUAL-001",
-        "network": "N/A"
+        "screenshots": ["m1/quality-presets/initial-state.png", "m1/quality-presets/page-loading.png", "m1/quality-presets/after-upload.png"]
       },
-      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+      "issues": "Cannot test - app crashes when file is added (same root cause as VAL-QUAL-001)"
     }
   ],
   "frictions": [
     {
-      "description": "Electron app process was started without --dev flag causing it to load wrong HTML path. Had to restart with --dev flag to connect to Vite dev server.",
-      "resolved": true,
-      "resolution": "Restarted Electron with --dev flag: node electron --remote-debugging-port=9222 --dev dist-electron/main/main.js",
+      "description": "Agent-browser CDP file upload does not provide File.path property which is required by Electron's file handling",
+      "resolved": false,
+      "resolution": "None available through browser automation - requires native Electron file dialog or direct file system access",
       "affectedAssertions": ["VAL-QUAL-001", "VAL-QUAL-002", "VAL-QUAL-003", "VAL-QUAL-004", "VAL-QUAL-005", "VAL-QUAL-006"]
     }
   ],
   "blockers": [
     {
-      "description": "React app is not rendering. Console errors 'Cannot read properties of undefined (reading 'isMaximized')' and 'Cannot read properties of undefined (reading 'onProgress')' are thrown during component mount, preventing React from mounting its components into #root element. The electronAPI object appears to be undefined when components try to access it.",
+      "description": "App crashes with 'Cannot read properties of undefined (reading split)' when a file is added. The crash occurs in the ffprobe processing because the file path is undefined when uploaded via CDP. This is a fundamental incompatibility between browser-based file upload (used by agent-browser) and Electron's native file path handling.",
       "affectedAssertions": ["VAL-QUAL-001", "VAL-QUAL-002", "VAL-QUAL-003", "VAL-QUAL-004", "VAL-QUAL-005", "VAL-QUAL-006"],
-      "quickFixAttempted": "Restarted Electron with --dev flag to connect to Vite dev server. Issue persists - React components still not mounting due to undefined property access errors."
+      "quickFixAttempted": "Attempted multiple file upload methods: (1) Direct upload to input[type=file], (2) Click on drop zone to trigger native file dialog, (3) File drag-drop simulation. All methods result in undefined file path."
     }
   ],
-  "summary": "Tested 0 assertions: 0 passed, 0 failed, 6 blocked. All quality preset assertions (VAL-QUAL-001 through VAL-QUAL-006) are blocked because the Electron app is not rendering React components. The app loads (http://localhost:5173 returns 200, title shows 'ffmpreg') but React fails to mount into #root element due to console errors: 'Cannot read properties of undefined (reading 'isMaximized')' and 'Cannot read properties of undefined (reading 'onProgress')'. This appears to be a bug in the preload/IPC setup where the electronAPI object is not initialized before components try to access it."
+  "summary": "Tested 0 assertions: 0 passed, 0 failed, 6 blocked. All quality preset assertions (VAL-QUAL-001 through VAL-QUAL-006) are blocked due to a bug in the app where it crashes when files are added via browser-based file upload. The File.path property is not available when using CDP-based file upload, causing ffprobe to receive an undefined file path. This is an Electron-specific issue where the native file path extension on the File object is not populated through browser-based file handling."
 }
