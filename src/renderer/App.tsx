@@ -1,27 +1,106 @@
+import { useState, useEffect, useCallback } from 'react';
 import { TitleBar } from './components/TitleBar';
+import { FileDropZone, FileType } from './components/FileDropZone';
+
+interface QueueItemData {
+  id: string;
+  sourcePath: string;
+  targetFormat: string;
+  status: string;
+  metadata?: {
+    inputType: FileType;
+    size: number;
+  };
+}
 
 export function App() {
+  const [queueItems, setQueueItems] = useState<QueueItemData[]>([]);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [currentItem, setCurrentItem] = useState<QueueItemData | null>(null);
+
+  // Listen for queue state changes
+  useEffect(() => {
+    const cleanup = window.electronAPI.onStatusChange((id, status) => {
+      // Refresh queue state when status changes
+      window.electronAPI.getQueueState().then((state: unknown) => {
+        const queueState = state as { items: QueueItemData[] };
+        setQueueItems(queueState.items || []);
+        
+        // Update current item if it changed
+        if (currentItem && queueState.items) {
+          const updated = queueState.items.find((i: QueueItemData) => i.id === currentItem.id);
+          if (updated) {
+            setCurrentItem(updated);
+          }
+        }
+      });
+    });
+
+    return cleanup;
+  }, [currentItem]);
+
+  // Fetch initial queue state
+  useEffect(() => {
+    window.electronAPI.getQueueState().then((state: unknown) => {
+      const queueState = state as { items: QueueItemData[] };
+      setQueueItems(queueState.items || []);
+    });
+  }, []);
+
+  const handleFileAdded = useCallback(async (filePath: string, fileType: FileType) => {
+    const result = await window.electronAPI.addFiles([filePath]);
+    if (result.success && result.items && result.items.length > 0) {
+      const item = result.items[0] as QueueItemData;
+      setCurrentItem(item);
+      setSelectedItemId(item.id);
+      
+      // Refresh queue
+      const state = await window.electronAPI.getQueueState() as { items: QueueItemData[] };
+      setQueueItems(state.items || []);
+    }
+  }, []);
+
+  const handleFileRemoved = useCallback(() => {
+    if (currentItem) {
+      window.electronAPI.removeItem(currentItem.id);
+      setCurrentItem(null);
+      setSelectedItemId(null);
+    }
+  }, [currentItem]);
+
   return (
     <div className="app">
       <TitleBar />
       <div className="app-content">
         <aside className="sidebar">
-          {/* File queue and drop zone will go here */}
           <div className="sidebar-header">
             <h2>Queue</h2>
           </div>
           <div className="sidebar-content">
-            {/* Drop zone placeholder - will be replaced by FileDropZone component */}
-            <div className="drop-zone-placeholder">
-              <p className="text-muted">Drop files here or click to browse</p>
-            </div>
+            <FileDropZone
+              onFileAdded={handleFileAdded}
+              onFileRemoved={handleFileRemoved}
+            />
+            {/* Queue items list would go here */}
           </div>
         </aside>
         <main className="main-panel">
-          {/* Detail view will go here */}
-          <div className="detail-placeholder">
-            <p className="text-muted">Select a file to see details</p>
-          </div>
+          {/* Detail view */}
+          {currentItem ? (
+            <div className="detail-content">
+              <div className="detail-header">
+                <h3>{currentItem.sourcePath.split('/').pop()}</h3>
+                <span className={`status-badge ${currentItem.status}`}>
+                  {currentItem.status}
+                </span>
+              </div>
+              {/* Format selector, quality presets, etc. will go here */}
+            </div>
+          ) : (
+            <div className="detail-placeholder">
+              <p className="text-muted">Select a file to see details</p>
+            </div>
+          )}
         </main>
       </div>
     </div>

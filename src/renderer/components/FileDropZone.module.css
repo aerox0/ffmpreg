@@ -1,0 +1,151 @@
+/* FileDropZone Component Styles */
+
+.dropZone {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-xl);
+  min-height: 200px;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropZone:hover {
+  border-color: var(--accent);
+  background-color: var(--accent-muted);
+}
+
+.dropZone.dragOver {
+  border-color: var(--accent);
+  background-color: var(--accent-muted);
+  border-style: solid;
+}
+
+.dropZone.hasFile {
+  border-style: solid;
+  border-color: var(--success);
+  background-color: rgba(74, 222, 128, 0.05);
+  cursor: default;
+}
+
+.dropZone.error {
+  border-color: var(--error);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+/* Empty state */
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: var(--space-md);
+  opacity: 0.5;
+}
+
+.emptyText {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.emptyHint {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* File loaded state */
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.fileTypeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fileTypeBadge.video {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.fileTypeBadge.audio {
+  background-color: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+}
+
+.fileTypeBadge.image {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.fileName {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-primary);
+  word-break: break-all;
+  max-width: 100%;
+  padding: 0 var(--space-sm);
+}
+
+.removeButton {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.removeButton:hover {
+  background-color: var(--error);
+  color: white;
+  border-color: var(--error);
+}
+
+/* Error state */
+.errorMessage {
+  color: var(--error);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.errorIcon {
+  font-size: 32px;
+  opacity: 0.8;
+}
+
+.errorHint {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* Hidden file input */
+.hiddenInput {
+  display: none;
+}

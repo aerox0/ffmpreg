@@ -1,18 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './TitleBar.module.css';
 
-declare global {
-  interface Window {
-    electronAPI: {
-      minimizeWindow: () => void;
-      maximizeWindow: () => void;
-      closeWindow: () => void;
-      isMaximized: () => Promise<boolean>;
-      onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void;
-    };
-  }
-}
-
 export function TitleBar() {
   const [isMaximized, setIsMaximized] = useState(false);
 
