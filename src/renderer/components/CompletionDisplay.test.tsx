@@ -92,12 +92,14 @@ describe('CompletionDisplay', () => {
   describe('failure state (failed)', () => {
     it('shows error title', () => {
       render(<CompletionDisplay {...defaultProps} status="failed" error="Test error message" />);
-      expect(screen.getByText('Encoding Failed')).toBeDefined();
+      // ErrorDisplay classifies "Test error message" as unknown and shows "Error" as title
+      expect(screen.getByText('Error')).toBeDefined();
     });
 
     it('shows error message', () => {
       render(<CompletionDisplay {...defaultProps} status="failed" error="Encoding failed: out of disk space" />);
-      expect(screen.getByText('Encoding failed: out of disk space')).toBeDefined();
+      // ErrorDisplay classifies "out of disk space" as disk-full and shows user-friendly message
+      expect(screen.getByText('Out of Disk Space')).toBeDefined();
     });
 
     it('shows retry button', () => {

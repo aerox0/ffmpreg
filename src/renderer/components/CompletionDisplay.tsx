@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { ErrorDisplay, classifyError, getErrorTitle, getErrorMessage } from './ErrorDisplay';
 import styles from './CompletionDisplay.module.css';
 
 export type CompletionStatus = 'done' | 'failed' | 'cancelled';
@@ -143,19 +144,13 @@ export function CompletionDisplay({
 
   if (status === 'failed' && error) {
     return (
-      <div className={styles.errorContainer}>
-        <div className={styles.errorIcon}>!</div>
-        <div className={styles.errorContent}>
-          <div className={styles.errorTitle}>Encoding Failed</div>
-          <div className={styles.errorMessage}>{error}</div>
-        </div>
-        <button
-          className={styles.retryButton}
-          onClick={handleRetry}
-        >
-          Retry
-        </button>
-      </div>
+      <ErrorDisplay
+        title={getErrorTitle(classifyError(error))}
+        message={getErrorMessage(classifyError(error), error)}
+        severity="error"
+        showRetry={true}
+        onRetry={handleRetry}
+      />
     );
   }
 

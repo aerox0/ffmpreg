@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { ErrorDisplay, classifyError, getErrorTitle, getErrorMessage } from './ErrorDisplay';
 import styles from './EncodeProgress.module.css';
 
 export type EncodeStatus = 'pending' | 'probing' | 'queued' | 'converting' | 'done' | 'failed' | 'cancelled';
@@ -193,7 +194,8 @@ export function EncodeProgress({
           </button>
         )}
 
-        {canRetry && (
+        {/* Show retry in buttonGroup only for cancelled (failed shows ErrorDisplay with retry) */}
+        {canRetry && status !== 'failed' && (
           <button
             className={styles.retryButton}
             onClick={handleRetry}
@@ -205,13 +207,13 @@ export function EncodeProgress({
 
       {/* Error Display */}
       {status === 'failed' && error && (
-        <div className={styles.errorContainer}>
-          <div className={styles.errorIcon}>!</div>
-          <div className={styles.errorContent}>
-            <div className={styles.errorTitle}>Encoding Failed</div>
-            <div className={styles.errorMessage}>{error}</div>
-          </div>
-        </div>
+        <ErrorDisplay
+          title={getErrorTitle(classifyError(error))}
+          message={getErrorMessage(classifyError(error), error)}
+          severity="error"
+          showRetry={true}
+          onRetry={handleRetry}
+        />
       )}
 
       {/* Completion Display */}

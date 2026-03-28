@@ -153,12 +153,14 @@ describe('EncodeProgress', () => {
   describe('error display', () => {
     it('shows error message when status is failed', () => {
       render(<EncodeProgress {...defaultProps} status="failed" error="Encoding failed: out of disk space" />);
-      expect(screen.getByText('Encoding failed: out of disk space')).toBeDefined();
+      // ErrorDisplay classifies "out of disk space" as disk-full and shows user-friendly message
+      expect(screen.getByText('Out of Disk Space')).toBeDefined();
     });
 
     it('shows error title', () => {
       render(<EncodeProgress {...defaultProps} status="failed" error="Test error" />);
-      expect(screen.getByText('Encoding Failed')).toBeDefined();
+      // ErrorDisplay classifies "Test error" as unknown and shows "Error" as title
+      expect(screen.getByText('Error')).toBeDefined();
     });
 
     it('does not show error when status is not failed', () => {
