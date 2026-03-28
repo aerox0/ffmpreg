@@ -2,13 +2,18 @@
  * Queue management for encoding tasks.
  */
 
-import { probeFile, MediaMetadata } from './ffprobe';
-import { resolveOutputPath, deleteFileIfExists } from '../shared/output-path';
-import { buildFfmpegArgs } from '../shared/ffmpeg-args';
+import { probeFile, MediaMetadata } from './ffprobe.js';
+import { resolveOutputPath, deleteFileIfExists } from '../shared/output-path.js';
+import { buildFfmpegArgs } from '../shared/ffmpeg-args.js';
 import { Worker } from 'worker_threads';
 import * as path from 'path';
 import * as fs from 'fs';
-import { getFfmpegPath } from './ffmpeg-path';
+import { fileURLToPath } from 'url';
+import { getFfmpegPath } from './ffmpeg-path.js';
+
+// Derive __dirname for ESM compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export type QueueItemStatus = 'pending' | 'probing' | 'queued' | 'converting' | 'done' | 'failed' | 'cancelled';
 

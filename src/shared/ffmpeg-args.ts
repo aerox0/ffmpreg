@@ -2,8 +2,8 @@
  * Build ffmpeg argument list for encoding.
  */
 
-import { getCodecForContainer, isStreamCopyable } from './codecs';
-import { getCrfRange, getGifPreset, getImageQualityRange, getAudioBitrateRange } from './presets';
+import { getCodecForContainer, isStreamCopyable } from './codecs.js';
+import { getCrfRange, getGifPreset, getImageQualityRange, getAudioBitrateRange } from './presets.js';
 
 export interface EncodeItem {
   id: string;

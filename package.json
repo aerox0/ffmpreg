@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "description": "FFmpeg frontend for non-technical users",
-  "main": "dist-electron/electron/main.js",
+  "main": "dist-electron/main/main.js",
   "author": "",
   "license": "MIT",
   "scripts": {

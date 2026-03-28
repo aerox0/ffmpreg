@@ -10,7 +10,12 @@
 
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import Store from 'electron-store';
+
+// Derive __dirname for ESM compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import {
   addFiles,
   removeItem,
@@ -23,8 +28,8 @@ import {
   getQueueItem,
   setProgressCallback,
   setStatusChangeCallback,
-} from './queue';
-import { probeFile } from './ffprobe';
+} from './queue.js';
+import { probeFile } from './ffprobe.js';
 
 let mainWindow: BrowserWindow | null = null;
 
