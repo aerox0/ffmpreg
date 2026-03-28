@@ -138,7 +138,13 @@ export function FileDropZone({ onFileAdded, onFileRemoved }: FileDropZoneProps) 
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={dropZoneClasses} onClick={handleClick}>
+    <div
+      className={dropZoneClasses}
+      onClick={handleClick}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <input
         ref={inputRef}
         type="file"

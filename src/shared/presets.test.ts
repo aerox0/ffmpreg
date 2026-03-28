@@ -8,12 +8,6 @@ import {
   getDefaultQuality,
   isQualityGuarded,
   getAvailableFormats,
-  CRF_RANGES,
-  AUDIO_BITRATE_RANGES,
-  GIF_PRESETS,
-  IMAGE_QUALITY_RANGES,
-  COMPRESSION_RATIOS,
-  type PresetName,
 } from './presets';
 
 describe('presets', () => {

@@ -5,6 +5,9 @@
 import { spawn } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 // ffprobe-static path - resolved at runtime
 let ffprobePath: string | null = null;

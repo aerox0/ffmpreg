@@ -3,8 +3,8 @@
  */
 
 import { probeFile, MediaMetadata } from './ffprobe';
-import { resolveOutputPath, deleteFileIfExists, getFileSize } from '../shared/output-path';
-import { buildFfmpegArgs, EncodeItem } from '../shared/ffmpeg-args';
+import { resolveOutputPath, deleteFileIfExists } from '../shared/output-path';
+import { buildFfmpegArgs } from '../shared/ffmpeg-args';
 import { Worker } from 'worker_threads';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -38,7 +38,7 @@ export interface QueueState {
 }
 
 // Main process state
-let queue: QueueItem[] = [];
+const queue: QueueItem[] = [];
 let currentItemId: string | null = null;
 let isProcessing = false;
 let currentWorker: Worker | null = null;

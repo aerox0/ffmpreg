@@ -1,8 +1,6 @@
 import { useCallback, useMemo, useState, useEffect, MouseEvent, ChangeEvent } from 'react';
 import {
   PresetName,
-  CRF_RANGES,
-  AUDIO_BITRATE_RANGES,
   getCrfRange,
   getAudioBitrateRange,
 } from '../../shared/presets';
@@ -94,9 +92,7 @@ export function QualityPreset({
 
   // Handle preset selection
   const handlePresetClick = useCallback(
-    (e: MouseEvent<HTMLButtonElement>, preset: PresetName) => {
-      e.preventDefault();
-      e.stopPropagation();
+    (_e: MouseEvent<HTMLButtonElement>, preset: PresetName) => {
       if (!disabled) {
         const range = getCrfRange(preset);
         const defaultCrf = range.default;
@@ -130,7 +126,7 @@ export function QualityPreset({
 
   // Handle slider mouse up (ensure final value is clamped)
   const handleSliderMouseUp = useCallback(
-    (e: MouseEvent<HTMLInputElement>) => {
+    (_e: MouseEvent<HTMLInputElement>) => {
       if (disabled) return;
       
       const range = getCrfRange(selectedPreset);

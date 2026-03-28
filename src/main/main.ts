@@ -23,7 +23,6 @@ import {
   getQueueItem,
   setProgressCallback,
   setStatusChangeCallback,
-  QueueItem,
 } from './queue';
 import { probeFile } from './ffprobe';
 

@@ -24,7 +24,8 @@ export function getOutputDir(sourcePath: string, customDir?: string): string {
 /**
  * Generate the base output filename from source filename and target format.
  */
-function getBaseOutputFilename(sourcePath: string, targetFormat: string): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function _getBaseOutputFilename(sourcePath: string, targetFormat: string): string {
   const dir = path.dirname(sourcePath);
   const ext = path.extname(sourcePath);
   const basename = path.basename(sourcePath, ext);
@@ -65,8 +66,8 @@ export function resolveOutputPath(
   // Generate base filename
   const ext = path.extname(sourcePath);
   const basename = path.basename(sourcePath, ext);
-  let candidateName = `${basename}.${targetFormat}`;
-  let candidatePath = path.join(baseDir, candidateName);
+  const candidateName = `${basename}.${targetFormat}`;
+  const candidatePath = path.join(baseDir, candidateName);
   
   // Check if this path is already in use in the queue
   if (existingPaths.has(candidatePath)) {

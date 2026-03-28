@@ -20,13 +20,13 @@ interface QueueItemData {
 }
 
 export function App() {
-  const [queueItems, setQueueItems] = useState<QueueItemData[]>([]);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [, setQueueItems] = useState<QueueItemData[]>([]);
+  const [, setSelectedItemId] = useState<string | null>(null);
   const [currentItem, setCurrentItem] = useState<QueueItemData | null>(null);
 
   // Listen for queue state changes
   useEffect(() => {
-    const cleanup = window.electronAPI.onStatusChange((id, status) => {
+    const cleanup = window.electronAPI.onStatusChange((_id, _status) => {
       // Refresh queue state when status changes
       window.electronAPI.getQueueState().then((state: unknown) => {
         const queueState = state as { items: QueueItemData[] };
@@ -53,7 +53,7 @@ export function App() {
     });
   }, []);
 
-  const handleFileAdded = useCallback(async (filePath: string, fileType: FileType) => {
+  const handleFileAdded = useCallback(async (filePath: string, _fileType: FileType) => {
     const result = await window.electronAPI.addFiles([filePath]);
     if (result.success && result.items && result.items.length > 0) {
       const item = result.items[0] as QueueItemData;
