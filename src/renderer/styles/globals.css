@@ -247,3 +247,124 @@ input:focus, select:focus, textarea:focus {
   justify-content: center;
   text-align: center;
 }
+
+/* Queue List */
+.queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.queue-item:hover {
+  border-color: var(--accent);
+  background-color: var(--accent-muted);
+}
+
+.queue-item.selected {
+  border-color: var(--accent);
+  background-color: var(--accent-muted);
+}
+
+.queue-item.done {
+  border-color: var(--success);
+}
+
+.queue-item.failed {
+  border-color: var(--error);
+}
+
+.queue-item.converting {
+  border-color: var(--info);
+}
+
+.queue-item-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: var(--space-sm);
+}
+
+.queue-item-status {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.queue-item-status.done {
+  background-color: rgba(74, 222, 128, 0.2);
+  color: var(--success);
+}
+
+.queue-item-status.failed {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--error);
+}
+
+.queue-item-status.converting {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: var(--info);
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.status-badge.pending,
+.status-badge.queued {
+  background-color: rgba(161, 161, 161, 0.2);
+  color: var(--text-secondary);
+}
+
+.status-badge.probing {
+  background-color: rgba(251, 191, 36, 0.2);
+  color: var(--warning);
+}
+
+.status-badge.converting {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: var(--info);
+}
+
+.status-badge.done {
+  background-color: rgba(74, 222, 128, 0.2);
+  color: var(--success);
+}
+
+.status-badge.failed {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--error);
+}
+
+.status-badge.cancelled {
+  background-color: rgba(161, 161, 161, 0.2);
+  color: var(--text-muted);
+}

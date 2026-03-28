@@ -26,8 +26,8 @@ interface QueueItemData {
 }
 
 export function App() {
-  const [, setQueueItems] = useState<QueueItemData[]>([]);
-  const [, setSelectedItemId] = useState<string | null>(null);
+  const [queueItems, setQueueItems] = useState<QueueItemData[]>([]);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [currentItem, setCurrentItem] = useState<QueueItemData | null>(null);
   const [progress, setProgress] = useState(0);
 
@@ -206,7 +206,27 @@ export function App() {
               onFileAdded={handleFileAdded}
               onFileRemoved={handleFileRemoved}
             />
-            {/* Queue items list would go here */}
+            {queueItems.length > 0 && (
+              <div className="queue-list">
+                {queueItems.map((item) => (
+                  <button
+                    key={item.id}
+                    className={`queue-item ${selectedItemId === item.id ? 'selected' : ''} ${item.status}`}
+                    onClick={() => {
+                      setSelectedItemId(item.id);
+                      setCurrentItem(item);
+                    }}
+                  >
+                    <span className="queue-item-name">
+                      {item.sourcePath.split('/').pop()}
+                    </span>
+                    <span className={`queue-item-status ${item.status}`}>
+                      {item.status === 'converting' && item.percent >= 0 ? `${item.percent}%` : item.status}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </aside>
         <main className="main-panel">
