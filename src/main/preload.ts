@@ -23,6 +23,7 @@ export interface ElectronAPI {
   
   // File operations
   probeFile: (filePath: string) => Promise<{ success: boolean; metadata?: unknown; error?: string }>;
+  getWaveform: (id: string) => Promise<number[]>;
   
   // Settings
   getSettings: () => Promise<Record<string, unknown>>;
@@ -60,6 +61,7 @@ const electronAPI: ElectronAPI = {
   
   // File operations
   probeFile: (filePath: string) => ipcRenderer.invoke('file:probe', filePath),
+  getWaveform: (id: string) => ipcRenderer.invoke('file:waveform', id),
   
   // Settings
   getSettings: () => ipcRenderer.invoke('settings:get'),
