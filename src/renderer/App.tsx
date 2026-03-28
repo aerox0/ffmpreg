@@ -4,16 +4,21 @@ import { FileDropZone, FileType } from './components/FileDropZone';
 import { FormatSelector } from './components/FormatSelector';
 import { QualityPreset } from './components/QualityPreset';
 import { SizeEstimation } from './components/SizeEstimation';
+import { EncodeProgress, EncodeStatus } from './components/EncodeProgress';
 import { PresetName } from '../shared/presets';
 
 interface QueueItemData {
   id: string;
   sourcePath: string;
+  outputPath: string;
   targetFormat: string;
-  status: string;
+  status: EncodeStatus;
   preset: PresetName;
   crf: number;
   audioBitrate: number;
+  error?: string;
+  percent: number;
+  outputSize?: number;
   metadata?: {
     inputType: FileType;
     size: number;
@@ -24,6 +29,17 @@ export function App() {
   const [, setQueueItems] = useState<QueueItemData[]>([]);
   const [, setSelectedItemId] = useState<string | null>(null);
   const [currentItem, setCurrentItem] = useState<QueueItemData | null>(null);
+  const [progress, setProgress] = useState(0);
+
+  // Listen for progress updates
+  useEffect(() => {
+    const cleanup = window.electronAPI.onProgress((id, percent) => {
+      if (currentItem && id === currentItem.id) {
+        setProgress(percent);
+      }
+    });
+    return cleanup;
+  }, [currentItem]);
 
   // Listen for queue state changes
   useEffect(() => {
@@ -38,6 +54,10 @@ export function App() {
           const updated = queueState.items.find((i: QueueItemData) => i.id === currentItem.id);
           if (updated) {
             setCurrentItem(updated);
+            // Reset progress when status changes
+            if (updated.status !== 'converting') {
+              setProgress(0);
+            }
           }
         }
       });
@@ -151,6 +171,28 @@ export function App() {
     [currentItem]
   );
 
+  const handleStartEncode = useCallback(async () => {
+    await window.electronAPI.startQueue();
+    setProgress(0);
+  }, []);
+
+  const handleCancelEncode = useCallback(async () => {
+    if (currentItem) {
+      await window.electronAPI.cancelItem(currentItem.id);
+    }
+  }, [currentItem]);
+
+  const handleRetryEncode = useCallback(async () => {
+    if (currentItem) {
+      await window.electronAPI.retryItem(currentItem.id);
+      setProgress(0);
+    }
+  }, [currentItem]);
+
+  const handleOpenFolder = useCallback(async (dirPath: string) => {
+    await window.electronAPI.shellOpenFolder(dirPath);
+  }, []);
+
   return (
     <div className="app">
       <TitleBar />
@@ -200,7 +242,19 @@ export function App() {
                   preset={currentItem.preset}
                 />
               )}
-              {/* Encode progress, completion display, etc. will go here */}
+              <EncodeProgress
+                itemId={currentItem.id}
+                status={currentItem.status}
+                progress={progress}
+                sourceSize={currentItem.metadata?.size}
+                outputSize={currentItem.outputSize}
+                outputPath={currentItem.outputPath}
+                error={currentItem.error}
+                onStartEncode={handleStartEncode}
+                onCancel={handleCancelEncode}
+                onRetry={handleRetryEncode}
+                onOpenFolder={handleOpenFolder}
+              />
             </div>
           ) : (
             <div className="detail-placeholder">
