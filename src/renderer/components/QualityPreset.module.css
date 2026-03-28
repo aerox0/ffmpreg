@@ -1,0 +1,230 @@
+/* QualityPreset Component Styles */
+
+.qualityPreset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+/* Preset Selector */
+.presetSelector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.presetButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.presetButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.presetButton:hover:not(.active):not(:disabled) {
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
+}
+
+.presetButton.active {
+  color: var(--bg-primary);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.presetButton.active:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.presetButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.presetName {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.presetRange {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.presetDescription {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.7;
+  text-align: center;
+}
+
+/* CRF Slider Section */
+.crfSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.crfHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crfLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.crfValue {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.sliderContainer {
+  position: relative;
+  padding: var(--space-sm) 0;
+}
+
+.crfSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  outline: none;
+  cursor: pointer;
+}
+
+.crfSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.crfSlider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background-color: var(--accent-hover);
+}
+
+.crfSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sliderBounds {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-xs);
+}
+
+.sliderBound {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Audio Bitrate Section */
+.audioSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.audioHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.audioLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.audioValue {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.audioNote {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Compact Preset Specific */
+.presetButton[data-preset="compact"] .presetRange::before {
+  content: '';
+}
+
+/* Good Preset Specific */
+.presetButton[data-preset="good"] .presetRange::before {
+  content: '';
+}
+
+/* High Preset Specific */
+.presetButton[data-preset="high"] .presetRange::before {
+  content: '';
+}
+
+/* Custom Preset Specific */
+.presetButton[data-preset="custom"] .presetRange::before {
+  content: '';
+}
+
+.presetButton[data-preset="custom"] {
+  border-style: dashed;
+}
+
+.presetButton[data-preset="custom"].active {
+  border-style: solid;
+}

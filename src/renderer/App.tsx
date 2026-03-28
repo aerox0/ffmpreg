@@ -2,12 +2,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { TitleBar } from './components/TitleBar';
 import { FileDropZone, FileType } from './components/FileDropZone';
 import { FormatSelector } from './components/FormatSelector';
+import { QualityPreset } from './components/QualityPreset';
+import { PresetName } from '../shared/presets';
 
 interface QueueItemData {
   id: string;
   sourcePath: string;
   targetFormat: string;
   status: string;
+  preset: PresetName;
+  crf: number;
+  audioBitrate: number;
   metadata?: {
     inputType: FileType;
     size: number;
@@ -88,6 +93,63 @@ export function App() {
     [currentItem]
   );
 
+  const handlePresetChange = useCallback(
+    async (preset: PresetName) => {
+      if (currentItem) {
+        await window.electronAPI.updateItemSettings(currentItem.id, {
+          preset,
+        });
+        // Refresh current item
+        const updatedItem = await window.electronAPI.getQueueItem(currentItem.id);
+        if (updatedItem) {
+          setCurrentItem(updatedItem as QueueItemData);
+        }
+        // Refresh queue
+        const state = await window.electronAPI.getQueueState() as { items: QueueItemData[] };
+        setQueueItems(state.items || []);
+      }
+    },
+    [currentItem]
+  );
+
+  const handleCrfChange = useCallback(
+    async (crf: number) => {
+      if (currentItem) {
+        await window.electronAPI.updateItemSettings(currentItem.id, {
+          crf,
+        });
+        // Refresh current item
+        const updatedItem = await window.electronAPI.getQueueItem(currentItem.id);
+        if (updatedItem) {
+          setCurrentItem(updatedItem as QueueItemData);
+        }
+        // Refresh queue
+        const state = await window.electronAPI.getQueueState() as { items: QueueItemData[] };
+        setQueueItems(state.items || []);
+      }
+    },
+    [currentItem]
+  );
+
+  const handleAudioBitrateChange = useCallback(
+    async (audioBitrate: number) => {
+      if (currentItem) {
+        await window.electronAPI.updateItemSettings(currentItem.id, {
+          audioBitrate,
+        });
+        // Refresh current item
+        const updatedItem = await window.electronAPI.getQueueItem(currentItem.id);
+        if (updatedItem) {
+          setCurrentItem(updatedItem as QueueItemData);
+        }
+        // Refresh queue
+        const state = await window.electronAPI.getQueueState() as { items: QueueItemData[] };
+        setQueueItems(state.items || []);
+      }
+    },
+    [currentItem]
+  );
+
   return (
     <div className="app">
       <TitleBar />
@@ -122,6 +184,15 @@ export function App() {
                   disabled={currentItem.status === 'converting'}
                 />
               )}
+              <QualityPreset
+                selectedPreset={currentItem.preset}
+                crf={currentItem.crf}
+                audioBitrate={currentItem.audioBitrate}
+                onPresetChange={handlePresetChange}
+                onCrfChange={handleCrfChange}
+                onAudioBitrateChange={handleAudioBitrateChange}
+                disabled={currentItem.status === 'converting'}
+              />
               {/* Quality presets, size estimation, encode progress, etc. will go here */}
             </div>
           ) : (
