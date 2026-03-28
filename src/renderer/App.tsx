@@ -3,6 +3,7 @@ import { TitleBar } from './components/TitleBar';
 import { FileDropZone, FileType } from './components/FileDropZone';
 import { FormatSelector } from './components/FormatSelector';
 import { QualityPreset } from './components/QualityPreset';
+import { SizeEstimation } from './components/SizeEstimation';
 import { PresetName } from '../shared/presets';
 
 interface QueueItemData {
@@ -193,7 +194,13 @@ export function App() {
                 onAudioBitrateChange={handleAudioBitrateChange}
                 disabled={currentItem.status === 'converting'}
               />
-              {/* Quality presets, size estimation, encode progress, etc. will go here */}
+              {currentItem.metadata?.size && (
+                <SizeEstimation
+                  sourceSize={currentItem.metadata.size}
+                  preset={currentItem.preset}
+                />
+              )}
+              {/* Encode progress, completion display, etc. will go here */}
             </div>
           ) : (
             <div className="detail-placeholder">
