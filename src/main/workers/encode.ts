@@ -3,6 +3,12 @@
  * 
  * This worker receives ffmpeg arguments and spawns ffmpeg process,
  * parsing stderr for progress updates and streaming them back to main.
+ * 
+ * Key behaviors:
+ * - Progress updates emitted at least once per second during transcode
+ * - Stream copy operations emit indeterminate progress immediately
+ * - Cancellation terminates ffmpeg within 2 seconds via SIGKILL
+ * - Done message includes output file size
  */
 
 import { parentPort, workerData } from 'worker_threads';
@@ -22,17 +28,35 @@ interface ProgressMessage {
   message?: string;
 }
 
+/**
+ * Check if the ffmpeg args indicate a stream copy operation.
+ * Stream copy uses -c:v copy which means no re-encoding.
+ */
+function isStreamCopyOperation(args: string[]): boolean {
+  // Look for -c:v copy or -c:v 'copy' in the arguments
+  for (let i = 0; i < args.length - 1; i++) {
+    if ((args[i] === '-c:v' || args[i] === '-vcodec') && args[i + 1] === 'copy') {
+      return true;
+    }
+  }
+  return false;
+}
+
 function main() {
   const { ffmpegPath, args, outputPath } = workerData as WorkerData;
 
   let ffmpegProcess: ReturnType<typeof spawn> | null = null;
   let cancelled = false;
+  let lastProgressTime = 0;
+  let lastPercent = 0;
+  let progressTimer: ReturnType<typeof setInterval> | null = null;
+  let hasReceivedProgress = false;
 
   // Handle cancellation messages from main thread
   parentPort?.on('message', (msg: { type: string }) => {
     if (msg.type === 'cancel' && ffmpegProcess) {
       cancelled = true;
-      // Send SIGKILL to ffmpeg
+      // Send SIGKILL to ffmpeg for immediate termination
       ffmpegProcess.kill('SIGKILL');
     }
   });
@@ -48,9 +72,36 @@ function main() {
 
   let stderr = '';
   let durationMs = 0;
+  const isStreamCopy = isStreamCopyOperation(args);
+
+  // If stream copy, emit indeterminate progress immediately
+  if (isStreamCopy) {
+    sendMessage({ type: 'indeterminate' });
+    hasReceivedProgress = true;
+  }
+
+  // Set up timer to emit progress at least once per second
+  // This ensures we always send updates even if ffmpeg stderr output is delayed
+  progressTimer = setInterval(() => {
+    const now = Date.now();
+    // If we've received progress before and at least 1 second has passed
+    if (hasReceivedProgress && now - lastProgressTime >= 1000) {
+      // Send the last known progress to keep the UI updated
+      sendMessage({ type: 'progress', percent: lastPercent });
+      lastProgressTime = now;
+    }
+  }, 250); // Check every 250ms
 
   ffmpegProcess.stderr?.on('data', (data: Buffer) => {
     stderr += data.toString();
+
+    // For stream copy, we don't get time= progress, but we may get
+    // "stream_copy" or similar markers in the output
+    if (isStreamCopy) {
+      // Stream copy is usually fast - watch for completion
+      // We still rely on the close event for final status
+      return;
+    }
 
     // Parse progress from stderr
     // Look for time=hh:mm:ss.ms pattern
@@ -63,6 +114,9 @@ function main() {
 
       if (durationMs > 0) {
         const percent = Math.min(99, Math.round((currentTimeMs / durationMs) * 100));
+        lastPercent = percent;
+        lastProgressTime = Date.now();
+        hasReceivedProgress = true;
         sendMessage({ type: 'progress', percent });
       }
     }
@@ -75,14 +129,15 @@ function main() {
       const seconds = parseFloat(durationMatch[3]);
       durationMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
     }
-
-    // Check for stream copy (no transcoding needed)
-    if (stderr.includes('stream_copy') || stderr.includes('Output #0')) {
-      // If we detect stream copy early, we may need indeterminate progress
-    }
   });
 
   ffmpegProcess.on('close', (code) => {
+    // Clear the progress timer
+    if (progressTimer) {
+      clearInterval(progressTimer);
+      progressTimer = null;
+    }
+
     if (cancelled) {
       sendMessage({ type: 'cancelled' });
       // Clean up partial output
@@ -124,6 +179,11 @@ function main() {
   });
 
   ffmpegProcess.on('error', (err) => {
+    // Clear the progress timer on error
+    if (progressTimer) {
+      clearInterval(progressTimer);
+      progressTimer = null;
+    }
     sendMessage({ type: 'error', message: err.message });
   });
 }
