@@ -1,0 +1,51 @@
+{
+  "featureId": "fix-esm-cjs-mismatch",
+  "reviewedAt": "2026-03-28T13:30:00.000Z",
+  "commitId": "b8c20f1",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "fail",
+  "codeReview": {
+    "summary": "The fix partially addresses the ESM/CJS mismatch but introduces a blocking runtime bug. While main.ts and queue.ts correctly derive __dirname via fileURLToPath, ffmpeg-path.ts and ffprobe.ts still use __dirname directly without derivation, causing undefined behavior in ESM context.",
+    "issues": [
+      {
+        "file": "src/main/ffmpeg-path.ts",
+        "line": 21,
+        "severity": "blocking",
+        "description": "Uses `__dirname` without derivation. In ESM, __dirname is undefined. Should derive via: `const __dirname = path.dirname(fileURLToPath(import.meta.url));`. This code path executes in packaged apps when ffmpeg-static is not available, causing runtime failure."
+      },
+      {
+        "file": "src/main/ffprobe.ts",
+        "line": 25,
+        "severity": "blocking",
+        "description": "Uses `__dirname` without derivation. Same issue as ffmpeg-path.ts. Should derive via: `const __dirname = path.dirname(fileURLToPath(import.meta.url));`. Fallback path for packaged apps will fail."
+      },
+      {
+        "file": "src/main/ffmpeg-path.ts",
+        "line": 7,
+        "severity": "non_blocking",
+        "description": "Uses `import.meta.url` via createRequire but does not derive __dirname. While this compiles, it's inconsistent with the ESM pattern the worker applied to main.ts and queue.ts."
+      },
+      {
+        "file": "src/main/ffprobe.ts",
+        "line": 7,
+        "severity": "non_blocking",
+        "description": "Uses `import.meta.url` via createRequire but does not derive __dirname. Same inconsistency as ffmpeg-path.ts."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "conventions",
+      "observation": "The backend-worker skill does not document ESM vs CommonJS patterns. When converting between module systems, __dirname/__filename must be explicitly derived in ESM using fileURLToPath. This pattern is not mentioned in AGENTS.md or the skill.",
+      "evidence": "ffmpeg-path.ts:21 and ffprobe.ts:25 use bare __dirname without derivation. The worker correctly applied the fix to main.ts and queue.ts but missed the same issue in the files specifically mentioned in the feature description."
+    },
+    {
+      "area": "skills",
+      "observation": "The electron-main-process work procedure in backend-worker skill doesn't mention module system considerations (ESM vs CommonJS). Workers following this procedure would not know to handle __dirname derivation when using ESM.",
+      "evidence": "Skill procedure for 'electron-main-process' has no guidance on ESM/CommonJS. The worker discovered this during implementation but the skill doesn't capture this knowledge."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "The fix converts the electron main process to ESM and the build succeeds. However, a blocking runtime bug exists: ffmpeg-path.ts and ffprobe.ts use __dirname in ESM context without deriving it from import.meta.url. This will fail when the packaged app fallback path is executed (rare, but will cause silent failures in production builds). The files were specifically mentioned in the feature description as the source of the ESM/CJS mismatch but were not fully fixed."
+}

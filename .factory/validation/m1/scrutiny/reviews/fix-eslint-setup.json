@@ -1,0 +1,39 @@
+{
+  "featureId": "fix-eslint-setup",
+  "reviewedAt": "2026-03-28T13:04:50.000Z",
+  "commitId": "f77cb58",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "ESLint setup is correctly implemented. Installed eslint@^8.57.0, @typescript-eslint/parser, @typescript-eslint/eslint-plugin. Created .eslintrc.json with TypeScript-friendly rules. Fixed 26 lint errors across 12 files. npm run lint exits with 0 (0 errors, 15 warnings). All 245 tests pass.",
+    "issues": [
+      {
+        "file": "src/shared/output-path.ts",
+        "line": 57,
+        "severity": "non_blocking",
+        "description": "Function `_getBaseOutputFilename` is defined but never used and has eslint-disable-next-line comment. This appears intentional as a placeholder for future functionality, but it generates a 'function is defined but never used' warning. If not needed, it should be removed entirely."
+      },
+      {
+        "file": "src/renderer/components/FileDropZone.test.tsx",
+        "line": 67,
+        "severity": "non_blocking",
+        "description": "15 warnings for @typescript-eslint/no-explicit-any in test file. These are test mock files where `any` types are common. The lint rule is set to 'warn' (not 'error'), so npm run lint still exits 0. These warnings don't block the feature but could be addressed by adding proper types to mock functions."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The scaffolding-worker skill procedure does not include ESLint setup, but ESLint configuration is a foundational code quality tool that should be set up early in a TypeScript project. The worker correctly identified this need and implemented it.",
+      "evidence": "Skill file .factory/skills/scaffolding-worker/SKILL.md lists 9 steps (package.json, tsconfig.json, vite.config.ts, etc.) but does not mention ESLint. The worker added ESLint as part of this feature."
+    },
+    {
+      "area": "conventions",
+      "observation": "No convention documentation exists for lint rules - what constitutes an error vs warning, or when to use eslint-disable comments. The project now has ESLint configured but the coding conventions are not documented.",
+      "evidence": "AGENTS.md documents testing, IPC API, quality guardrail rules, file structure, and commands, but does not document lint rules or code quality conventions."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "ESLint setup is correctly implemented and working. The feature installed eslint packages, created .eslintrc.json with TypeScript rules, and fixed 26 lint errors across 12 files. npm run lint exits with 0. Minor issues: 1) An unused placeholder function remains in output-path.ts, and 2) 15 test file warnings for explicit-any types. Neither blocks the feature's completion. The scaffolding-worker skill did not document ESLint setup as part of its procedure, but the work was correctly performed as foundational infrastructure."
+}

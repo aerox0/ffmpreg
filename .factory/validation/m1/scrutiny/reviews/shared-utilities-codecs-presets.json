@@ -1,0 +1,56 @@
+{
+  "featureId": "shared-utilities-codecs-presets",
+  "reviewedAt": "2026-03-28T13:04:50.000Z",
+  "commitId": "5c647e8",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "Implementation fully matches the feature description and design spec. All four utility modules (codecs.ts, presets.ts, ffmpeg-args.ts, output-path.ts) are correctly implemented with proper CRF bounds enforcement, codec mappings, stream copy detection, trim support, and conflict resolution with -1/-2 suffix pattern. 67 unit tests added and passing.",
+    "issues": [
+      {
+        "file": "src/shared/codecs.ts",
+        "line": 56,
+        "severity": "non_blocking",
+        "description": "normalizeCodec only handles 'avc1.' and 'hev1.' prefixes for codec name normalization. If ffprobe returns codec names in other formats (e.g., 'H264', 'h.264', 'avc'), stream copy detection could fail. Consider documenting expected ffprobe codec name formats or expanding normalization to handle common variations."
+      },
+      {
+        "file": "src/shared/output-path.ts",
+        "line": 50,
+        "severity": "non_blocking",
+        "description": "getOutputDir silently falls back to source directory when customDir is provided but doesn't exist. This behavior matches the spec ('defaults to source file's directory') but is not explicitly documented in the function or AGENTS.md. The fallback is intentional but could confuse future maintainers."
+      },
+      {
+        "file": "src/shared/output-path.ts",
+        "line": 58,
+        "severity": "non_blocking",
+        "description": "_getBaseOutputFilename is defined but never used (marked with eslint-disable for @typescript-eslint/no-unused-vars). This dead code should be removed or the function should be made available if needed."
+      },
+      {
+        "file": "src/shared/ffmpeg-args.ts",
+        "line": 127,
+        "severity": "non_blocking",
+        "description": "buildGifArgs generates a palette file path with '_palette.gif' suffix, but buildGifFinalArgs (which consumes this palette) is not tested. While GIF encoding was not part of the feature description, this two-pass GIF workflow is incomplete without tests."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "conventions",
+      "observation": "AGENTS.md references '.factory/services.yaml' and '.factory/library/' for documenting project services and knowledge respectively, but these files do not exist in this repository. Workers following AGENTS.md for guidance on where to document discovered patterns would not find these locations.",
+      "evidence": "AGENTS.md states: 'commands and services that should be in .factory/services.yaml' and '.factory/library/ (patterns, quirks, env vars)' but Glob found no matches for these files in the repo"
+    },
+    {
+      "area": "knowledge",
+      "observation": "The normalizeCodec function handles specific ffprobe codec name prefixes ('avc1.', 'hev1.') but the expected ffprobe codec name format is not documented anywhere. Workers implementing stream copy or codec comparison would need to reverse-engineer this or check ffprobe output directly.",
+      "evidence": "codecs.ts:normalizeCodec only handles 'avc1.' → 'h264' and 'hev1.' → 'hevc' transformations. ffprobe can return various codec name formats (h264, avc1, libx264, etc.)"
+    },
+    {
+      "area": "conventions",
+      "observation": "The '_palette.gif' suffix for GIF palette generation is hardcoded in ffmpeg-args.ts but not documented in the design spec or anywhere in shared state. Workers implementing GIF encoding would need to discover this naming convention by reading the code.",
+      "evidence": "ffmpeg-args.ts line 127: outputPath.replace(/\\.gif$/i, '_palette.gif') - this magic string is not documented"
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "Feature implementation passes review. All shared utilities (codecs, presets, ffmpeg-args, output-path) are correctly implemented per design spec with comprehensive unit tests (67 tests). CRF bounds enforcement, codec mappings, stream copy detection, trim support, and conflict resolution all work as specified. Minor non-blocking issues: normalizeCodec may not handle all ffprobe codec name formats, getOutputDir silent fallback behavior is undocumented, and dead code exists. Shared state gaps noted: services.yaml and library/ files don't exist as referenced in AGENTS.md."
+}

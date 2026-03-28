@@ -1,0 +1,62 @@
+{
+  "featureId": "project-scaffolding",
+  "reviewedAt": "2026-03-28T14:30:00.000Z",
+  "commitId": "6f8f27f",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "The scaffolding feature successfully created all required project infrastructure. All verification steps passed (npm install, npm run dev, npm run build, npm run test, npm run typecheck). Minor issues were found but are non-blocking.",
+    "issues": [
+      {
+        "file": "package.json",
+        "line": 4,
+        "severity": "non_blocking",
+        "description": "The 'main' field is set to 'dist-electron/electron/main.js' but the tsconfig.electron.json (with rootDir: 'src') would produce output at 'dist-electron/main/main.js'. This path mismatch is masked by a pre-existing dist-electron/electron/ directory from an earlier analysis phase. A later commit (b8c20f1 ESM fix) corrected this to 'dist-electron/main/main.js'."
+      },
+      {
+        "file": "package.json",
+        "line": 20,
+        "severity": "non_blocking",
+        "description": "The lint script references 'eslint' but ESLint packages (@typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint) are not in devDependencies. ESLint was added later in commit f77cb58. The scaffold created the lint script as a placeholder but did not include the actual ESLint packages."
+      },
+      {
+        "file": "index.html",
+        "line": 7,
+        "severity": "non_blocking",
+        "description": "The Content-Security-Policy only allows 'style-src self unsafe-inline' but does not include Google Fonts origins. The later version of index.html (current HEAD) adds Google Fonts preconnect links and allows fonts.googleapis.com. The fonts (Cormorant Garamond, DM Sans, JetBrains Mono per design spec) were added in a subsequent commit."
+      },
+      {
+        "file": "electron-builder.yml",
+        "line": 18,
+        "severity": "non_blocking",
+        "description": "extraResources references 'resources/ffmpeg' but this directory did not exist at the time of the scaffold commit. AGENTS.md documents that resources/ffmpeg contains pre-bundled Windows binaries and is off-limits. The scaffold correctly references an existing resource directory without creating/modifying it."
+      },
+      {
+        "file": "package.json / electron-builder.yml",
+        "line": 0,
+        "severity": "non_blocking",
+        "description": "Duplicate build configuration: both package.json 'build' field and electron-builder.yml exist. This is not an error (electron-builder supports both), but is redundant. The package.json build field was not updated to match electron-builder.yml (e.g., nsis.artifactName is only in the yml)."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "conventions",
+      "observation": "The scaffolding worker created .factory/ directory files (services.yaml, skills, library) as part of the scaffold feature. This was appropriate for a greenfield project, but future scaffolding features in other projects should clarify whether factory infrastructure is part of the scaffold scope or a separate concern.",
+      "evidence": "commit 6f8f27f adds .factory/init.sh, .factory/services.yaml, .factory/skills/*/SKILL.md, .factory/library/*.md — these are not strictly 'project scaffolding' (package.json, configs, directory structure) but were correctly implemented."
+    },
+    {
+      "area": "conventions",
+      "observation": "The preload.ts IPC method names don't match the IPC channel names in main.ts. preload.ts calls ipcRenderer.invoke('add-files') but the main.ts IPC handler is registered as ipcMain.handle('queue:add-files'). However, this was scaffold-level inconsistency that was later resolved in the electron-main-process feature which rewrote main.ts.",
+      "evidence": "Scaffold commit 6f8f27f: preload.ts uses 'add-files', 'remove-item', 'start-queue' but main.ts (stub) has no handlers yet. The IPC channel naming convention (queue:add-files vs add-files) was later standardized."
+    },
+    {
+      "area": "services",
+      "observation": "The scaffold created npm scripts but some scripts reference commands not yet implemented (e.g., lint). This is acceptable for scaffolding but workers on subsequent features must be aware that lint was not available at scaffold time.",
+      "evidence": "package.json script 'lint' references eslint which was added later (f77cb58). The scaffold created the script as a forward-declaration of intent."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "The project-scaffolding feature successfully created a functional Electron + React 19 + Vite + TypeScript project scaffold. All verification commands passed. The scaffold included all required dependencies, configs (tsconfig, vite, vitest, electron-builder), directory structure, and basic entry points. Minor issues were found (package.json main path mismatch, missing ESLint packages, CSP without Google Fonts) but these were non-blocking and were partially addressed in subsequent commits. The scaffold also properly documented project infrastructure in .factory/ files."
+}

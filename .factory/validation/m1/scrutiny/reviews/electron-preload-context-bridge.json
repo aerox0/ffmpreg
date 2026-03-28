@@ -1,0 +1,39 @@
+{
+  "featureId": "electron-preload-context-bridge",
+  "reviewedAt": "2026-03-28T12:30:00.000Z",
+  "commitId": "8ae48e2",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "fail",
+  "codeReview": {
+    "summary": "Implementation is mostly correct but missing the explicitly-required 'getWaveform' method. The feature description and AGENTS.md both require getWaveform(id: string): Promise<number[]> to be exposed, but the implementation provides 'probeFile' instead. Additionally, the skill says to expose 'All methods from the IPC API documented in AGENTS.md' which includes getWaveform.",
+    "issues": [
+      {
+        "file": "src/main/preload.ts",
+        "line": 24,
+        "severity": "blocking",
+        "description": "Missing 'getWaveform' method. Feature description requires exposing 'getWaveform', AGENTS.md documents it as 'getWaveform(id: string): Promise<number[]>', and skill procedure says to expose 'All methods from the IPC API documented in AGENTS.md'. Instead, implementation provides 'probeFile' which was not in the feature description."
+      },
+      {
+        "file": "src/main/preload.ts",
+        "line": 24,
+        "severity": "non_blocking",
+        "description": "Implementation includes 'probeFile' method which was not in the feature description. This is not inherently wrong but represents a deviation from the feature specification."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "conventions",
+      "observation": "AGENTS.md documents a specific IPC API interface with getWaveform, but neither AGENTS.md nor the skill mention that 'probeFile' is an acceptable alias or replacement for it. Worker implemented probeFile without recognizing the getWaveform gap.",
+      "evidence": "src/main/preload.ts exposes probeFile but not getWaveform. AGENTS.md IPC API section shows getWaveform(id: string): Promise<number[]> under 'Waveform (future)'."
+    },
+    {
+      "area": "skills",
+      "observation": "Skill SKILL.md for electron-preload-context-bridge says 'All methods from the IPC API documented in AGENTS.md' but AGENTS.md lists getWaveform while the implementation has probeFile. The worker followed the skill procedure but didn't cross-check against AGENTS.md for the specific method names.",
+      "evidence": "Skill step says to implement preload with 'All methods from the IPC API documented in AGENTS.md'. Worker followed procedure but the handoff shows no deviations recorded."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "The preload implementation is mostly correct with proper TypeScript interfaces, contextBridge exposure, and event listener cleanup functions. However, it fails because 'getWaveform' is missing — the feature description and AGENTS.md both require it but the implementation provides 'probeFile' instead. This is a blocking issue that must be fixed."
+}

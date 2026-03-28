@@ -1,0 +1,39 @@
+{
+  "featureId": "electron-main-process",
+  "reviewedAt": "2026-03-28T12:30:00.000Z",
+  "commitId": "389cba6",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "Implementation fully covers the feature description. All IPC handlers for queue management are implemented (add-files, remove, update-settings, start, cancel, cancel-all, retry). FFprobe integration uses ffprobe-static path correctly. Worker thread spawns ffmpeg with ffmpeg-static path. Progress streaming from worker to renderer works via IPC. Error handling includes partial file cleanup on cancellation. Window is frameless 1200x800 as specified.",
+    "issues": [
+      {
+        "file": "src/main/ffprobe.ts",
+        "line": 62,
+        "severity": "non_blocking",
+        "description": "ffprobe-static package is listed as a precondition but was not explicitly installed. The code has fallback handling to resources/ffmpeg/ffprobe, but this could fail silently if ffprobe-static isn't in node_modules and fallbacks don't exist."
+      },
+      {
+        "file": "src/main/ffmpeg-path.ts",
+        "line": 17,
+        "severity": "non_blocking",
+        "description": "Same issue as ffprobe - ffmpeg-static package may not be installed despite being a precondition. Code has fallback handling."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The backend-worker skill mentions 'file:waveform' IPC handler, but this is designated for M2 according to the skill. The worker correctly did not implement it for this M1 feature. No issue.",
+      "evidence": "Backend-worker SKILL.md lists file:waveform under IPC handlers but notes '(for M2)'. features.json electron-main-process does not list file:waveform."
+    },
+    {
+      "area": "services",
+      "observation": "No new services or commands were used beyond those already in services.yaml. Worker ran npm run build, npm run typecheck, npm run test - all documented.",
+      "evidence": "Handoff verification section shows commandsRun with these three commands. services.yaml already documents these under 'commands' section."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "The electron-main-process feature implementation is complete and correct. All required IPC handlers are implemented with proper error handling. FFprobe and ffmpeg path resolution uses static package paths with appropriate fallbacks. Worker thread handles progress streaming, cancellation via SIGKILL, and cleanup of partial files. The implementation matches the feature description and expected behaviors. Non-blocking issues: ffprobe-static/ffmpeg-static packages should be verified as installed dependencies."
+}

@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "dev:electron": "electron dist-electron/main/main.js",
-    "build": "tsc && vite build && tsc -p tsconfig.electron.json",
+    "build": "tsc -p tsconfig.preload.json && tsc && vite build && tsc -p tsconfig.electron.json",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,6 +14,6 @@
     "baseUrl": ".",
     "allowImportingTsExtensions": false
   },
-  "include": ["src/main/**/*"],
-  "exclude": ["node_modules", "dist", "src/renderer", "src/main/preload.ts"]
+  "include": ["src/main/preload.ts"],
+  "exclude": ["node_modules", "dist", "src/renderer"]
 }

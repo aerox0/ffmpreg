@@ -1,0 +1,15 @@
+{
+  "featureId": "fix-__dirname-esm",
+  "reviewedAt": "2026-03-28T13:30:00.000Z",
+  "commitId": "59565c9",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "The fix correctly adds proper ESM __dirname derivation to ffmpeg-path.ts and ffprobe.ts using fileURLToPath and import.meta.url. Both files now import fileURLToPath from 'url' and derive __dirname via path.dirname(fileURLToPath(import.meta.url)). This directly addresses the original failure where these files used __dirname without derivation in ESM context, which would cause runtime failures in packaged apps.",
+    "issues": []
+  },
+  "sharedStateObservations": [],
+  "addressesFailureFrom": null,
+  "summary": "PASS - The fix adequately addresses the original ESM __dirname issue. Both ffmpeg-path.ts and ffprobe.ts now have proper ESM-compatible __dirname derivation. The fix is minimal and targeted, adding only the necessary fileURLToPath import and __dirname/__filename derivation to both files. Verification shows typecheck, lint, and all 245 tests pass."
+}

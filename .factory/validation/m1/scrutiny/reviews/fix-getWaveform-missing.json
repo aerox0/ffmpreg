@@ -1,0 +1,15 @@
+{
+  "featureId": "fix-getWaveform-missing",
+  "reviewedAt": "2026-03-28T14:00:00.000Z",
+  "commitId": "a99ecd8",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "Fix properly addresses the original failure. The implementation adds getWaveform(id: string): Promise<number[]> to the preload.ts interface and contextBridge, wires up the file:waveform IPC handler in main.ts, and implements getWaveformData() using ffmpeg to extract normalized audio amplitude peaks.",
+    "issues": []
+  },
+  "sharedStateObservations": [],
+  "addressesFailureFrom": ".factory/validation/m1/scrutiny/reviews/electron-preload-context-bridge.json",
+  "summary": "The fix correctly implements the missing getWaveform method. The prior review identified that preload.ts exposed probeFile but not getWaveform as required by the feature description and AGENTS.md. This fix adds: (1) getWaveform to ElectronAPI interface in preload.ts, (2) getWaveform invocation via ipcRenderer.invoke('file:waveform', id) in the contextBridge, (3) file:waveform IPC handler in main.ts, and (4) getWaveformData() function that uses ffmpeg to extract audio and compute normalized amplitude peaks (0-1 range). All verification steps (typecheck, test, lint, build) passed. The worker followed the backend-worker skill procedure correctly."
+}
