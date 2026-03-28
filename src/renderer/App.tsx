@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TitleBar } from './components/TitleBar';
 import { FileDropZone, FileType } from './components/FileDropZone';
+import { FormatSelector } from './components/FormatSelector';
 
 interface QueueItemData {
   id: string;
@@ -68,6 +69,25 @@ export function App() {
     }
   }, [currentItem]);
 
+  const handleFormatSelect = useCallback(
+    async (format: string) => {
+      if (currentItem) {
+        await window.electronAPI.updateItemSettings(currentItem.id, {
+          targetFormat: format,
+        });
+        // Refresh current item
+        const updatedItem = await window.electronAPI.getQueueItem(currentItem.id);
+        if (updatedItem) {
+          setCurrentItem(updatedItem as QueueItemData);
+        }
+        // Refresh queue
+        const state = await window.electronAPI.getQueueState() as { items: QueueItemData[] };
+        setQueueItems(state.items || []);
+      }
+    },
+    [currentItem]
+  );
+
   return (
     <div className="app">
       <TitleBar />
@@ -94,7 +114,15 @@ export function App() {
                   {currentItem.status}
                 </span>
               </div>
-              {/* Format selector, quality presets, etc. will go here */}
+              {currentItem.metadata?.inputType && (
+                <FormatSelector
+                  inputType={currentItem.metadata.inputType}
+                  selectedFormat={currentItem.targetFormat}
+                  onFormatSelect={handleFormatSelect}
+                  disabled={currentItem.status === 'converting'}
+                />
+              )}
+              {/* Quality presets, size estimation, encode progress, etc. will go here */}
             </div>
           ) : (
             <div className="detail-placeholder">
