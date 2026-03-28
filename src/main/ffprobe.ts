@@ -141,22 +141,22 @@ function parseFFProbeOutput(output: FFProbeOutput, filePath: string): MediaMetad
   const streams = output.streams || [];
   const format = output.format || {};
 
-  // Find video, audio, and image streams
+  // Find video and audio streams (needed for metadata regardless of input type)
   const videoStream = streams.find(s => s.codec_type === 'video');
   const audioStream = streams.find(s => s.codec_type === 'audio');
 
-  // Determine input type
+  // Check file extension FIRST for image types
+  // This ensures images with MJPEG streams are still classified as images
+  const ext = path.extname(filePath).toLowerCase();
+  const imageExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp'];
+  
   let inputType: 'video' | 'audio' | 'image' = 'video';
-  if (videoStream) {
+  if (imageExtensions.includes(ext)) {
+    inputType = 'image';
+  } else if (videoStream) {
     inputType = 'video';
   } else if (audioStream) {
     inputType = 'audio';
-  } else {
-    // Check file extension for images
-    const ext = path.extname(filePath).toLowerCase();
-    if (['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp'].includes(ext)) {
-      inputType = 'image';
-    }
   }
 
   // Parse frame rate
