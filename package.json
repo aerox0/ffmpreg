@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "dev:electron": "electron dist-electron/electron/main.js",
+    "dev:electron": "electron dist-electron/main/main.js",
     "build": "tsc && vite build && tsc -p tsconfig.electron.json",
     "preview": "vite preview",
     "test": "vitest run",

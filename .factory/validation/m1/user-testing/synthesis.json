@@ -1,0 +1,67 @@
+{
+  "milestone": "m1",
+  "round": 1,
+  "status": "fail",
+  "assertionsSummary": {
+    "total": 26,
+    "passed": 0,
+    "failed": 0,
+    "blocked": 26
+  },
+  "passedAssertions": [],
+  "failedAssertions": [],
+  "blockedAssertions": [
+    { "id": "VAL-FILE-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-FILE-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-FILE-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-FILE-004", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-FILE-005", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-FILE-006", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-FILE-007", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-FILE-008", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-QUAL-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-QUAL-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-QUAL-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-QUAL-004", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-QUAL-005", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-QUAL-006", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-004", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-005", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-006", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-007", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ENCODE-008", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ERR-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-ERR-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-CROSS-001", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-CROSS-002", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" },
+    { "id": "VAL-CROSS-003", "blockedBy": "Electron preload script fails to expose electronAPI - React app does not render" }
+  ],
+  "appliedUpdates": [
+    {
+      "target": "package.json",
+      "description": "Fixed dev:electron script path from dist-electron/electron/main.js to dist-electron/main/main.js",
+      "source": "setup"
+    },
+    {
+      "target": "user-testing.md",
+      "description": "Added critical issue documentation about preload script ES module bug",
+      "source": "setup"
+    }
+  ],
+  "previousRound": null,
+  "rootCause": {
+    "description": "The Electron preload script (src/main/preload.ts) fails to expose window.electronAPI due to ES module/CommonJS incompatibility",
+    "details": [
+      "TypeScript compiler outputs ES module syntax with 'export {};'",
+      "The preload code uses 'require(electron)' which is CommonJS",
+      "In ES module context, require is not available as a global",
+      "The preload script fails silently and electronAPI is never exposed",
+      "React components call window.electronAPI methods and crash during mount",
+      "The React app fails to render - #root div remains empty"
+    ],
+    "suggestedFix": "Fix preload.ts to use proper ES module imports or configure the build to output CommonJS for the preload script. Options: 1) Use dynamic import() instead of require, 2) Configure TypeScript to output CommonJS for preload, 3) Use a bundler like esbuild to create a bundled preload script"
+  }
+}

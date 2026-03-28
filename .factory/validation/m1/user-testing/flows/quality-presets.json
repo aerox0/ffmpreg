@@ -1,0 +1,104 @@
+{
+  "groupId": "quality-presets",
+  "testedAt": "2026-03-28T13:41:00.000Z",
+  "isolation": {
+    "cdpPort": 9222,
+    "electronAppConnected": true,
+    "testMediaLocation": "/tmp/ffmpreg-test-media/",
+    "testVideoFile": "test_video.mp4"
+  },
+  "toolsUsed": ["agent-browser"],
+  "assertions": [
+    {
+      "id": "VAL-QUAL-001",
+      "title": "Preset Selection Updates CRF Slider Bounds",
+      "status": "blocked",
+      "steps": [
+        { "action": "Connect to Electron app via CDP port 9222", "expected": "App UI accessible", "observed": "Connected but app not rendering" },
+        { "action": "Navigate to app URL", "expected": "App loads and displays drop zone", "observed": "Page loads but React components not mounting" }
+      ],
+      "evidence": {
+        "screenshots": ["quality-presets/app-not-rendering.png"],
+        "consoleErrors": "Cannot read properties of undefined (reading 'isMaximized'), Cannot read properties of undefined (reading 'onProgress')",
+        "network": "http://localhost:5173/ returns 200"
+      },
+      "issues": "Electron app is not rendering React components. The app shows title 'ffmpreg' and page loads (http://localhost:5173 returns 200), but the #root element has 0 children. Console errors: 'Cannot read properties of undefined (reading 'isMaximized')' and 'Cannot read properties of undefined (reading 'onProgress')' are preventing React from mounting. This blocks all quality preset testing."
+    },
+    {
+      "id": "VAL-QUAL-002",
+      "title": "CRF Slider Respects Preset Bounds",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "Same as VAL-QUAL-001",
+        "network": "N/A"
+      },
+      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+    },
+    {
+      "id": "VAL-QUAL-003",
+      "title": "Size Estimation Displayed with ~ Prefix",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "Same as VAL-QUAL-001",
+        "network": "N/A"
+      },
+      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+    },
+    {
+      "id": "VAL-QUAL-004",
+      "title": "Larger Than Source Warning Appears When Applicable",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "Same as VAL-QUAL-001",
+        "network": "N/A"
+      },
+      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+    },
+    {
+      "id": "VAL-QUAL-005",
+      "title": "Custom Preset Allows Full Range But Warning Still Fires",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "Same as VAL-QUAL-001",
+        "network": "N/A"
+      },
+      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+    },
+    {
+      "id": "VAL-QUAL-006",
+      "title": "Preset Change Updates All Quality Displays",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": [],
+        "consoleErrors": "Same as VAL-QUAL-001",
+        "network": "N/A"
+      },
+      "issues": "Blocked by same rendering issue as VAL-QUAL-001"
+    }
+  ],
+  "frictions": [
+    {
+      "description": "Electron app process was started without --dev flag causing it to load wrong HTML path. Had to restart with --dev flag to connect to Vite dev server.",
+      "resolved": true,
+      "resolution": "Restarted Electron with --dev flag: node electron --remote-debugging-port=9222 --dev dist-electron/main/main.js",
+      "affectedAssertions": ["VAL-QUAL-001", "VAL-QUAL-002", "VAL-QUAL-003", "VAL-QUAL-004", "VAL-QUAL-005", "VAL-QUAL-006"]
+    }
+  ],
+  "blockers": [
+    {
+      "description": "React app is not rendering. Console errors 'Cannot read properties of undefined (reading 'isMaximized')' and 'Cannot read properties of undefined (reading 'onProgress')' are thrown during component mount, preventing React from mounting its components into #root element. The electronAPI object appears to be undefined when components try to access it.",
+      "affectedAssertions": ["VAL-QUAL-001", "VAL-QUAL-002", "VAL-QUAL-003", "VAL-QUAL-004", "VAL-QUAL-005", "VAL-QUAL-006"],
+      "quickFixAttempted": "Restarted Electron with --dev flag to connect to Vite dev server. Issue persists - React components still not mounting due to undefined property access errors."
+    }
+  ],
+  "summary": "Tested 0 assertions: 0 passed, 0 failed, 6 blocked. All quality preset assertions (VAL-QUAL-001 through VAL-QUAL-006) are blocked because the Electron app is not rendering React components. The app loads (http://localhost:5173 returns 200, title shows 'ffmpreg') but React fails to mount into #root element due to console errors: 'Cannot read properties of undefined (reading 'isMaximized')' and 'Cannot read properties of undefined (reading 'onProgress')'. This appears to be a bug in the preload/IPC setup where the electronAPI object is not initialized before components try to access it."
+}

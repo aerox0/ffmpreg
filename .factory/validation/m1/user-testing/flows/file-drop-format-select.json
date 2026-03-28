@@ -1,0 +1,117 @@
+{
+  "groupId": "file-drop-format-select",
+  "testedAt": "2026-03-28T13:42:00.000Z",
+  "isolation": {
+    "electronCDPPort": 9222,
+    "electronAppRunning": true,
+    "testMediaLocation": "/tmp/ffmpreg-test-media/"
+  },
+  "toolsUsed": ["agent-browser"],
+  "assertions": [
+    {
+      "id": "VAL-FILE-001",
+      "title": "Drag and Drop Video File Accepted",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: window.electronAPI is undefined in renderer. The preload script is not exposing the electronAPI to the window object. The app renders an empty div#root and shows React error boundaries for TitleBar and App components."
+    },
+    {
+      "id": "VAL-FILE-002",
+      "title": "Drag and Drop Audio File Adapts Format List",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: Same as VAL-FILE-001 - window.electronAPI is undefined"
+    },
+    {
+      "id": "VAL-FILE-003",
+      "title": "Drag and Drop Image File Adapts Format List",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: Same as VAL-FILE-001 - window.electronAPI is undefined"
+    },
+    {
+      "id": "VAL-FILE-004",
+      "title": "Browse Button Opens File Picker",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: Same as VAL-FILE-001 - window.electronAPI is undefined"
+    },
+    {
+      "id": "VAL-FILE-005",
+      "title": "Unsupported File Format Shows Error",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: Same as VAL-FILE-001 - window.electronAPI is undefined"
+    },
+    {
+      "id": "VAL-FILE-006",
+      "title": "Format Pill Selection Is Single-Select",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: Same as VAL-FILE-001 - window.electronAPI is undefined"
+    },
+    {
+      "id": "VAL-FILE-007",
+      "title": "Quality Presets Shown After Format Selection",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: Same as VAL-FILE-001 - window.electronAPI is undefined"
+    },
+    {
+      "id": "VAL-FILE-008",
+      "title": "File Remove Resets UI",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {
+        "screenshots": ["file-drop-format-select/VAL-FILE-001-error-state.png"],
+        "consoleErrors": "React errors in TitleBar and App components",
+        "network": "N/A - app not rendering"
+      },
+      "issues": "BLOCKER: Same as VAL-FILE-001 - window.electronAPI is undefined"
+    }
+  ],
+  "frictions": [],
+  "blockers": [
+    {
+      "description": "window.electronAPI is undefined in renderer process. The preload script at dist-electron/main/main.js is not properly exposing the electronAPI to the window object via contextBridge. When the renderer tries to call window.electronAPI methods (isMaximized, onMaximizeChange, etc.), it throws errors, causing React error boundaries to catch errors in TitleBar and App components, leaving the app with an empty #root div.",
+      "affectedAssertions": ["VAL-FILE-001", "VAL-FILE-002", "VAL-FILE-003", "VAL-FILE-004", "VAL-FILE-005", "VAL-FILE-006", "VAL-FILE-007", "VAL-FILE-008"],
+      "quickFixAttempted": "Reloaded the page multiple times, connected via different CDP methods (agent-browser connect 9222, agent-browser --auto-connect). The issue persists - window.electronAPI remains undefined."
+    }
+  ],
+  "summary": "Tested 8 assertions (VAL-FILE-001 through VAL-FILE-008): All blocked due to critical app failure. The Electron app is running with CDP debugging enabled on port 9222, but window.electronAPI is undefined in the renderer process, preventing the React app from mounting properly. The preload script does not appear to be properly exposing the electronAPI object to the renderer via contextBridge.exposeInMainWorld('electronAPI', electronAPI)."
+}

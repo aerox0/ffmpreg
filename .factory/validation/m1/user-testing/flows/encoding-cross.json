@@ -1,0 +1,140 @@
+{
+  "groupId": "encoding-cross",
+  "testedAt": "2026-03-28T13:42:00.000Z",
+  "isolation": {
+    "electronAppRunning": true,
+    "cdpPort": 9222,
+    "viteDevServerUrl": "http://localhost:5173",
+    "testMediaLocation": "/tmp/ffmpreg-test-media/",
+    "ffmpegBinary": "/home/zero/dev/ffmpreg/node_modules/ffmpeg-static/ffmpeg"
+  },
+  "toolsUsed": ["agent-browser"],
+  "assertions": [
+    {
+      "id": "VAL-ENCODE-001",
+      "title": "Start Encode Initiates FFmpeg Process",
+      "status": "blocked",
+      "steps": [
+        { "action": "Connect to Electron app via CDP port 9222", "expected": "Browser connected to app", "observed": "Connected successfully" },
+        { "action": "Navigate to app URL", "expected": "App UI rendered", "observed": "Page is blank - React app failed to mount" },
+        { "action": "Verify window.electronAPI is available", "expected": "window.electronAPI defined", "observed": "window.electronAPI is undefined" }
+      ],
+      "evidence": {
+        "screenshots": ["m1/user-testing/evidence/encoding-cross/electron-app-state.png"],
+        "consoleErrors": "TitleBar component error: 'An error occurred in the <TitleBar> component'",
+        "evaluation": "typeof window.electronAPI === 'undefined'"
+      },
+      "issues": "BLOCKED: When connecting via CDP to Electron app, window.electronAPI (exposed via contextBridge in preload script) is not available. This causes TitleBar component to crash when calling window.electronAPI.isMaximized(). No error boundary exists to handle this gracefully, causing entire React app to fail mounting."
+    },
+    {
+      "id": "VAL-ENCODE-002",
+      "title": "Progress Bar Updates At Least Once Per Second",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ENCODE-003",
+      "title": "Indeterminate Progress for Stream Copy",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ENCODE-004",
+      "title": "Cancel Stops FFmpeg and Cleans Up Partial File",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ENCODE-005",
+      "title": "Completion Shows Output File Path",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ENCODE-006",
+      "title": "Completion Shows Source vs Output Size",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ENCODE-007",
+      "title": "Output File in Same Directory by Default",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ENCODE-008",
+      "title": "Output Filename Conflict Resolved with Suffix",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-CROSS-001",
+      "title": "Format Selection to Encode End-to-End",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-CROSS-002",
+      "title": "Preset Bound Enforcement Through Full Encode",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-CROSS-003",
+      "title": "Output Path Resolution Before Encoding",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ERR-001",
+      "title": "Corrupt or Unreadable File Marked as Failed",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    },
+    {
+      "id": "VAL-ERR-002",
+      "title": "Encoding Error Cleans Up Partial Output",
+      "status": "blocked",
+      "steps": [],
+      "evidence": {},
+      "issues": "BLOCKED: Same root cause as VAL-ENCODE-001 - app fails to render"
+    }
+  ],
+  "frictions": [],
+  "blockers": [
+    {
+      "description": "window.electronAPI is undefined when connecting via CDP to Electron app. The preload script exposes electronAPI via contextBridge, but CDP connections bypass this. TitleBar component calls window.electronAPI.isMaximized() which throws TypeError. No error boundary exists to handle this, causing entire React app to fail mounting.",
+      "affectedAssertions": [
+        "VAL-ENCODE-001", "VAL-ENCODE-002", "VAL-ENCODE-003", "VAL-ENCODE-004",
+        "VAL-ENCODE-005", "VAL-ENCODE-006", "VAL-ENCODE-007", "VAL-ENCODE-008",
+        "VAL-CROSS-001", "VAL-CROSS-002", "VAL-CROSS-003",
+        "VAL-ERR-001", "VAL-ERR-002"
+      ],
+      "quickFixAttempted": "Restarted Electron app with --remote-debugging-port=9222, reconnected agent-browser, tried navigating to app URL - same result. window.electronAPI remains undefined in CDP context."
+    }
+  ],
+  "summary": "Tested 13 assertions: All BLOCKED. The Electron app cannot be tested via CDP connection because window.electronAPI (exposed via contextBridge preload script) is not available in CDP context. This causes TitleBar component to crash when it tries to call window.electronAPI.isMaximized(), and without an error boundary, the entire React app fails to mount leaving a blank page."
+}
