@@ -1,0 +1,148 @@
+/* ErrorDisplay Component Styles */
+
+.errorContainer {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid;
+}
+
+/* Severity variants */
+.errorContainer.error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--error);
+}
+
+.errorContainer.warning {
+  background-color: rgba(234, 179, 8, 0.1);
+  border-color: var(--warning);
+}
+
+.errorContainer.info {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: var(--info);
+}
+
+/* Icon container */
+.iconContainer {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.error .iconContainer {
+  background-color: var(--error);
+  color: white;
+}
+
+.warning .iconContainer {
+  background-color: var(--warning);
+  color: var(--bg-primary);
+}
+
+.info .iconContainer {
+  background-color: var(--info);
+  color: white;
+}
+
+/* Icon text */
+.icon {
+  line-height: 1;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Title */
+.title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.error .title {
+  color: var(--error);
+}
+
+.warning .title {
+  color: var(--warning);
+}
+
+.info .title {
+  color: var(--info);
+}
+
+/* Message */
+.message {
+  font-size: 13px;
+  color: var(--text-secondary);
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+/* Retry button */
+.retryButton {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  border: 1px solid;
+}
+
+.error .retryButton {
+  color: var(--accent);
+  background-color: rgba(232, 162, 58, 0.15);
+  border-color: var(--accent);
+}
+
+.error .retryButton:hover {
+  background-color: rgba(232, 162, 58, 0.25);
+}
+
+.warning .retryButton {
+  color: var(--accent);
+  background-color: rgba(232, 162, 58, 0.15);
+  border-color: var(--accent);
+}
+
+.warning .retryButton:hover {
+  background-color: rgba(232, 162, 58, 0.25);
+}
+
+.info .retryButton {
+  color: var(--info);
+  background-color: rgba(59, 130, 246, 0.15);
+  border-color: var(--info);
+}
+
+.info .retryButton:hover {
+  background-color: rgba(59, 130, 246, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .errorContainer {
+    flex-direction: column;
+  }
+
+  .retryButton {
+    width: 100%;
+    text-align: center;
+  }
+}
