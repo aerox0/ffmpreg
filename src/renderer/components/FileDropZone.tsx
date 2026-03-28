@@ -168,10 +168,13 @@ export function FileDropZone({ onFileAdded, onFileRemoved }: FileDropZoneProps) 
 
       {!loadedFile && !error && (
         <>
-          <div className={styles.emptyIcon}>📁</div>
-          <div className={styles.emptyText}>Drop files here or click to browse</div>
+          <svg className={styles.emptyIcon} width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 4L18 8V16L12 20L6 16V8L12 4Z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+          </svg>
+          <div className={styles.emptyText}>Drop media here</div>
           <div className={styles.emptyHint}>
-            Supports: {ALL_SUPPORTED_EXTENSIONS.join(', ')}
+            or click to browse
           </div>
         </>
       )}

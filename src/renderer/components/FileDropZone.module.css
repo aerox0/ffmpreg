@@ -2,29 +2,28 @@
 
 .dropZone {
   position: relative;
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-lg);
+  border: 1px dashed var(--text-muted);
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--space-xl);
-  min-height: 200px;
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  padding: var(--space-lg);
+  min-height: 150px;
+  transition: border-color var(--transition-normal), background-color var(--transition-normal);
   cursor: pointer;
   user-select: none;
 }
 
 .dropZone:hover {
-  border-color: var(--accent);
-  background-color: var(--accent-muted);
+  border-color: var(--text-secondary);
 }
 
 .dropZone.dragOver {
   border-color: var(--accent);
-  background-color: var(--accent-muted);
   border-style: solid;
+  background-color: var(--accent-muted);
 }
 
 .dropZone.hasFile {
@@ -41,9 +40,8 @@
 
 /* Empty state */
 .emptyIcon {
-  font-size: 48px;
-  margin-bottom: var(--space-md);
-  opacity: 0.5;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
 }
 
 .emptyText {

@@ -32,8 +32,10 @@ export function TitleBar() {
     <div className={styles.titlebar}>
       <div className={styles.dragRegion}>
         <div className={styles.brand}>
-          <span className={styles.logo}>◈</span>
-          <span className={styles.title}>ffmpreg</span>
+          <svg className={styles.logo} width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1L14 5.5V10.5L8 15L2 10.5V5.5L8 1Z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="8" cy="8" r="2" fill="currentColor"/>
+          </svg>
         </div>
       </div>
       <div className={styles.controls}>

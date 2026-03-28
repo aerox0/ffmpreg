@@ -1,48 +1,56 @@
 /* Design Tokens */
 :root {
   /* Colors - Dark Theme */
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #252525;
-  --bg-tertiary: #2d2d2d;
+  --bg-primary: #141414;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #252525;
   --accent: #e8a23a;
   --accent-hover: #f0b54a;
-  --accent-muted: rgba(232, 162, 58, 0.15);
-  
+  --accent-muted: rgba(232, 162, 58, 0.12);
+
   /* Text */
-  --text-primary: #f5f5f5;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
-  
-  /* Borders */
-  --border: #3a3a3a;
-  --border-light: #444444;
-  
+  --text-primary: #f0f0f0;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+
+  /* Borders - removed, use shadows instead */
+  --border: transparent;
+  --border-light: transparent;
+
   /* Status */
   --success: #4ade80;
   --warning: #fbbf24;
   --error: #ef4444;
+  --error-muted: rgba(239, 68, 68, 0.15);
   --info: #3b82f6;
-  
+
+  /* Format-specific colors */
+  --format-video: #3b82f6;
+  --format-audio: #a855f7;
+  --format-image: #22c55e;
+
   /* Fonts */
   --font-serif: 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  
+
   /* Spacing */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
-  
+  --space-2xl: 48px;
+
   /* Layout */
   --titlebar-height: 40px;
-  --sidebar-width: 420px;
-  
+  --sidebar-width: 320px;
+  --main-panel-padding: 48px;
+
   /* Transitions */
   --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-  
+  --transition-normal: 200ms ease;
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -65,7 +73,7 @@ html, body, #root {
 body {
   font-family: var(--font-sans);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--text-primary);
   background-color: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
@@ -75,7 +83,7 @@ body {
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.2;
 }
 
@@ -188,15 +196,14 @@ input:focus, select:focus, textarea:focus {
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
   background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-header {
   padding: var(--space-md) var(--space-lg);
-  border-bottom: 1px solid var(--border);
 }
 
 .sidebar-header h2 {
@@ -220,19 +227,20 @@ input:focus, select:focus, textarea:focus {
   flex-direction: column;
   overflow: hidden;
   background-color: var(--bg-primary);
+  padding: var(--main-panel-padding);
 }
 
 /* Placeholders */
 .drop-zone-placeholder {
-  height: 200px;
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-lg);
+  min-height: 150px;
+  border: 1px dashed var(--text-muted);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: var(--space-lg);
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  transition: border-color var(--transition-normal), background-color var(--transition-normal);
 }
 
 .drop-zone-placeholder:hover {
@@ -246,6 +254,7 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: var(--space-2xl);
 }
 
 /* Queue List */
@@ -262,34 +271,53 @@ input:focus, select:focus, textarea:focus {
   justify-content: space-between;
   padding: var(--space-sm) var(--space-md);
   background-color: var(--bg-tertiary);
-  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-normal);
   text-align: left;
   width: 100%;
+  border-left: 2px solid transparent;
 }
 
 .queue-item:hover {
-  border-color: var(--accent);
-  background-color: var(--accent-muted);
+  background-color: #2a2a2a;
 }
 
 .queue-item.selected {
-  border-color: var(--accent);
+  border-left: 2px solid var(--accent);
   background-color: var(--accent-muted);
 }
 
-.queue-item.done {
-  border-color: var(--success);
+.queue-item.selected:hover {
+  background-color: var(--accent-muted);
 }
 
-.queue-item.failed {
-  border-color: var(--error);
-}
-
+.queue-item.disabled,
 .queue-item.converting {
-  border-color: var(--info);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.queue-item .remove-btn {
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  line-height: 1;
+}
+
+.queue-item:hover .remove-btn {
+  opacity: 1;
+}
+
+.queue-item .remove-btn:hover {
+  color: var(--error);
+  background-color: var(--error-muted);
 }
 
 .queue-item-name {
@@ -301,6 +329,12 @@ input:focus, select:focus, textarea:focus {
   white-space: nowrap;
   flex: 1;
   margin-right: var(--space-sm);
+}
+
+.queue-item-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 .queue-item-status {

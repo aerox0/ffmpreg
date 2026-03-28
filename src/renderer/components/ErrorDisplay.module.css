@@ -2,53 +2,33 @@
 
 .errorContainer {
   display: flex;
+  flex-direction: column;
   gap: var(--space-md);
   padding: var(--space-md);
   border-radius: var(--radius-md);
-  border: 1px solid;
+  background-color: var(--error-muted);
+  border: 1px solid transparent;
 }
 
-/* Severity variants */
-.errorContainer.error {
-  background-color: rgba(239, 68, 68, 0.1);
-  border-color: var(--error);
-}
-
-.errorContainer.warning {
-  background-color: rgba(234, 179, 8, 0.1);
-  border-color: var(--warning);
-}
-
-.errorContainer.info {
-  background-color: rgba(59, 130, 246, 0.1);
-  border-color: var(--info);
+/* Icon + Message row */
+.iconRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
 /* Icon container */
 .iconContainer {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-}
-
-.error .iconContainer {
   background-color: var(--error);
-  color: white;
-}
-
-.warning .iconContainer {
-  background-color: var(--warning);
-  color: var(--bg-primary);
-}
-
-.info .iconContainer {
-  background-color: var(--info);
   color: white;
 }
 
@@ -57,31 +37,11 @@
   line-height: 1;
 }
 
-/* Content */
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
 /* Title */
 .title {
   font-size: 14px;
   font-weight: 600;
-}
-
-.error .title {
-  color: var(--error);
-}
-
-.warning .title {
-  color: var(--warning);
-}
-
-.info .title {
-  color: var(--info);
+  color: var(--text-primary);
 }
 
 /* Message */
@@ -90,59 +50,32 @@
   color: var(--text-secondary);
   word-break: break-word;
   line-height: 1.5;
+  padding-left: 28px;
 }
 
-/* Retry button */
-.retryButton {
-  flex-shrink: 0;
+/* Retry link */
+.retryLink {
   align-self: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-sm);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--accent);
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
-  border: 1px solid;
+  padding: 0 0 0 28px;
+  transition: color var(--transition-fast);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.error .retryButton {
-  color: var(--accent);
-  background-color: rgba(232, 162, 58, 0.15);
-  border-color: var(--accent);
-}
-
-.error .retryButton:hover {
-  background-color: rgba(232, 162, 58, 0.25);
-}
-
-.warning .retryButton {
-  color: var(--accent);
-  background-color: rgba(232, 162, 58, 0.15);
-  border-color: var(--accent);
-}
-
-.warning .retryButton:hover {
-  background-color: rgba(232, 162, 58, 0.25);
-}
-
-.info .retryButton {
-  color: var(--info);
-  background-color: rgba(59, 130, 246, 0.15);
-  border-color: var(--info);
-}
-
-.info .retryButton:hover {
-  background-color: rgba(59, 130, 246, 0.25);
+.retryLink:hover {
+  color: var(--accent-hover);
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-  .errorContainer {
-    flex-direction: column;
-  }
-
-  .retryButton {
-    width: 100%;
-    text-align: center;
+  .message,
+  .retryLink {
+    padding-left: 0;
   }
 }

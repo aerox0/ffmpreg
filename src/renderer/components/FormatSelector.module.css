@@ -24,23 +24,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-sm) var(--space-md);
+  padding: 5px var(--space-sm);
   border-radius: 999px; /* Pill shape */
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border);
+  background-color: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-normal);
   user-select: none;
 }
 
 .formatPill:hover:not(.active):not(:disabled) {
   color: var(--text-primary);
-  background-color: var(--bg-secondary);
-  border-color: var(--border-light);
+  box-shadow: 0 0 0 1.5px var(--accent);
 }
 
 .formatPill.active {

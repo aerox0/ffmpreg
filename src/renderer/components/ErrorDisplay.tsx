@@ -60,17 +60,17 @@ export function ErrorDisplay({
   const icon = getIcon(severity);
 
   return (
-    <div className={`${styles.errorContainer} ${styles[severity]} ${className}`}>
-      <div className={styles.iconContainer}>
-        <span className={styles.icon}>{icon}</span>
-      </div>
-      <div className={styles.content}>
+    <div className={`${styles.errorContainer} ${className}`}>
+      <div className={styles.iconRow}>
+        <div className={styles.iconContainer}>
+          <span className={styles.icon}>{icon}</span>
+        </div>
         <div className={styles.title}>{title}</div>
-        <div className={styles.message}>{message}</div>
       </div>
+      <div className={styles.message}>{message}</div>
       {showRetry && onRetry && (
         <button
-          className={styles.retryButton}
+          className={styles.retryLink}
           onClick={handleRetry}
         >
           Retry

@@ -96,16 +96,19 @@ export function CompletionDisplay({
   if (status === 'done' && outputPath) {
     return (
       <div className={styles.completionContainer}>
+        {/* Large Checkmark */}
+        <div className={styles.checkmarkIcon}>✓</div>
+
         {/* Output Path */}
         <div className={styles.pathSection}>
           <div className={styles.pathLabel}>Output File</div>
-          <div className={styles.pathValue}>{outputFilename}</div>
+          <div className={styles.pathValue} title={outputPath}>{outputFilename}</div>
           {outputDir && (
             <button
-              className={styles.openFolderButton}
+              className={styles.openFolderLink}
               onClick={handleOpenFolder}
             >
-              Open Folder
+              Open folder
             </button>
           )}
         </div>

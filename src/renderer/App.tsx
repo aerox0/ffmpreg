@@ -269,8 +269,24 @@ export function App() {
                     <span className="queue-item-name">
                       {item.sourcePath.split('/').pop()}
                     </span>
-                    <span className={`queue-item-status ${item.status}`}>
-                      {item.status === 'converting' && item.percent >= 0 ? `${item.percent}%` : item.status}
+                    <span className="queue-item-right">
+                      <span className={`queue-item-status ${item.status}`}>
+                        {item.status === 'converting' && item.percent >= 0 ? `${item.percent}%` : item.status}
+                      </span>
+                      <button
+                        className="remove-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.electronAPI.removeItem(item.id);
+                          if (selectedItemId === item.id) {
+                            setSelectedItemId(null);
+                            setCurrentItem(null);
+                          }
+                        }}
+                        title="Remove from queue"
+                      >
+                        ×
+                      </button>
                     </span>
                   </button>
                 ))}

@@ -85,22 +85,24 @@
 .progressBar {
   position: relative;
   width: 100%;
-  height: 8px;
+  height: 6px;
   background-color: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
-  border-radius: 4px;
+  background-color: var(--accent);
+  border-radius: 3px;
   transition: width 200ms ease-out;
 }
 
 /* Indeterminate Progress */
 .progressIndeterminate {
   background-color: var(--bg-tertiary);
+  height: 6px;
+  border-radius: 3px;
 }
 
 .progressPulse {
@@ -247,9 +249,22 @@
   flex-direction: column;
   gap: var(--space-lg);
   padding: var(--space-lg);
-  background-color: rgba(74, 222, 128, 0.1);
-  border: 1px solid var(--success);
+  background-color: var(--accent-muted);
+  border: 1px solid var(--accent);
   border-radius: var(--radius-md);
+}
+
+/* Large Checkmark Icon */
+.completionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: var(--bg-primary);
+  font-size: 24px;
 }
 
 /* Path Section */
@@ -268,26 +283,28 @@
 }
 
 .pathValue {
-  font-size: 16px;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
-.openFolderButton {
+.openFolderLink {
   align-self: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--accent);
-  background-color: transparent;
-  border: 1px solid var(--accent);
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  padding: 0;
+  transition: color var(--transition-fast);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.openFolderButton:hover {
-  background-color: rgba(232, 162, 58, 0.15);
+.openFolderLink:hover {
+  color: var(--accent-hover);
 }
 
 /* Size Comparison */

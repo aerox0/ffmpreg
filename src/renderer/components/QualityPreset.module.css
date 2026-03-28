@@ -22,9 +22,11 @@
 }
 
 .presetButtons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-sm);
+  display: flex;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--bg-tertiary);
 }
 
 .presetButton {
@@ -32,35 +34,37 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border);
+  background-color: transparent;
+  border: none;
+  border-right: 1px solid var(--bg-tertiary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-normal);
   user-select: none;
+  flex: 1;
+}
+
+.presetButton:last-child {
+  border-right: none;
 }
 
 .presetButton:hover:not(.active):not(:disabled) {
   color: var(--text-primary);
-  background-color: var(--bg-secondary);
-  border-color: var(--border-light);
+  background-color: var(--bg-tertiary);
 }
 
 .presetButton.active {
   color: var(--bg-primary);
   background-color: var(--accent);
-  border-color: var(--accent);
 }
 
 .presetButton.active:hover {
   background-color: var(--accent-hover);
-  border-color: var(--accent-hover);
 }
 
 .presetButton:disabled {
@@ -69,22 +73,19 @@
 }
 
 .presetName {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .presetRange {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 400;
-  opacity: 0.8;
+  color: var(--text-muted);
 }
 
 .presetDescription {
-  font-size: 11px;
-  font-weight: 400;
-  opacity: 0.7;
-  text-align: center;
+  display: none;
 }
 
 /* CRF Slider Section */
@@ -108,9 +109,9 @@
 
 .crfValue {
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text-muted);
 }
 
 .sliderContainer {
@@ -122,8 +123,8 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
-  border-radius: 3px;
+  height: 4px;
+  border-radius: 2px;
   background: var(--bg-tertiary);
   outline: none;
   cursor: pointer;
@@ -132,29 +133,29 @@
 .crfSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
   border: 2px solid var(--bg-primary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   transition: transform var(--transition-fast), background-color var(--transition-fast);
 }
 
 .crfSlider::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
   background-color: var(--accent-hover);
 }
 
 .crfSlider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
   border: 2px solid var(--bg-primary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 .sliderBounds {
@@ -165,7 +166,7 @@
 
 .sliderBound {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
 }
 
@@ -190,9 +191,9 @@
 
 .audioValue {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-muted);
 }
 
 .audioNote {
@@ -201,30 +202,3 @@
   font-style: italic;
 }
 
-/* Compact Preset Specific */
-.presetButton[data-preset="compact"] .presetRange::before {
-  content: '';
-}
-
-/* Good Preset Specific */
-.presetButton[data-preset="good"] .presetRange::before {
-  content: '';
-}
-
-/* High Preset Specific */
-.presetButton[data-preset="high"] .presetRange::before {
-  content: '';
-}
-
-/* Custom Preset Specific */
-.presetButton[data-preset="custom"] .presetRange::before {
-  content: '';
-}
-
-.presetButton[data-preset="custom"] {
-  border-style: dashed;
-}
-
-.presetButton[data-preset="custom"].active {
-  border-style: solid;
-}
