@@ -1,0 +1,66 @@
+{
+  "milestone": "m1",
+  "round": 1,
+  "status": "fail",
+  "validatorsRun": {
+    "test": { "passed": true, "command": "npm run test", "exitCode": 0 },
+    "typecheck": { "passed": true, "command": "npm run typecheck", "exitCode": 0 },
+    "lint": { "passed": true, "command": "npm run lint", "exitCode": 0 }
+  },
+  "reviewsSummary": {
+    "total": 16,
+    "passed": 13,
+    "failed": 3,
+    "failedFeatures": [
+      "electron-preload-context-bridge",
+      "fix-esm-cjs-mismatch",
+      "error-handling-component"
+    ]
+  },
+  "blockingIssues": [
+    {
+      "featureId": "electron-preload-context-bridge",
+      "severity": "blocking",
+      "description": "Missing 'getWaveform' method. Feature description and AGENTS.md both require exposing getWaveform(id: string): Promise<number[]>, but implementation provides 'probeFile' instead. The preload exposes all other methods but getWaveform is absent."
+    },
+    {
+      "featureId": "fix-esm-cjs-mismatch",
+      "severity": "blocking",
+      "description": "ffmpeg-path.ts (line 21) and ffprobe.ts (line 25) use __dirname without derivation from import.meta.url. In ESM, __dirname is undefined. While main.ts and queue.ts correctly derive __dirname via fileURLToPath, the two files specifically mentioned in the feature description were not fully fixed. This will cause runtime failures in packaged apps when the fallback path is executed."
+    },
+    {
+      "featureId": "error-handling-component",
+      "severity": "blocking",
+      "description": "ErrorDisplay component and error classification utilities (classifyError, getErrorTitle, getErrorMessage) were created but NOT integrated into the application. The component exists at src/renderer/components/ErrorDisplay.tsx but is never imported or used by App.tsx, EncodeProgress.tsx, or CompletionDisplay.tsx. These components still use their own inline error displays with hardcoded 'Encoding Failed' messages instead of using ErrorDisplay with classification."
+    }
+  ],
+  "appliedUpdates": [],
+  "suggestedGuidanceUpdates": [
+    {
+      "target": "skills/frontend-worker/SKILL.md",
+      "suggestion": "Add integration step to error-handling-component procedure: the ErrorDisplay component must be imported and used by EncodeProgress.tsx, CompletionDisplay.tsx, and App.tsx. The skill only specified creating the component, not integrating it. This led to dead code.",
+      "evidence": "error-handling-component review found ErrorDisplay.tsx never imported anywhere; skill procedure step 2 says 'Integrate error states into queue item display' but did not specify which files need modification",
+      "isSystemic": false
+    },
+    {
+      "target": "skills/backend-worker/SKILL.md",
+      "suggestion": "Add ESM/CommonJS module system guidance. When using ESM, __dirname and __filename must be derived via path.dirname(fileURLToPath(import.meta.url)). This pattern should be documented for workers implementing electron main process code.",
+      "evidence": "fix-esm-cjs-mismatch review found worker correctly fixed main.ts and queue.ts but missed ffmpeg-path.ts and ffprobe.ts; backend-worker skill has no guidance on ESM patterns",
+      "isSystemic": false
+    },
+    {
+      "target": "skills/frontend-worker/SKILL.md",
+      "suggestion": "Document that getWaveform is a required part of the IPC API per AGENTS.md. Workers implementing preload should cross-check against AGENTS.md IPC API section, not just the feature description.",
+      "evidence": "electron-preload-context-bridge review found worker implemented probeFile but missed getWaveform which is documented in AGENTS.md IPC API section",
+      "isSystemic": false
+    },
+    {
+      "target": "AGENTS.md",
+      "suggestion": "Document that the ErrorDisplay component should be used by all components that display errors (EncodeProgress, CompletionDisplay), not implemented inline in each component. This avoids duplicate error display code and ensures consistent error classification.",
+      "evidence": "error-handling-component review found duplicate inline error displays in EncodeProgress.tsx:207-212 and CompletionDisplay.tsx:144-150",
+      "isSystemic": false
+    }
+  ],
+  "rejectedObservations": [],
+  "previousRound": null
+}
